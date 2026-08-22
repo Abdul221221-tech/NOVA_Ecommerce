@@ -1,0 +1,75 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# env files
+.env
+.env.*
+!.env.example
+
+# next.js
+/.next/
+/out/
+/dist/
+/build/
+
+# vercel
+.vercel/
+
+# testing
+/coverage
+
+# logs and debug files
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+*.pem
+scratch/
+
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary scripts and logs
+check.js
+check2.js
+fix_images.js
+fix_images_fast.js
+migrate.mjs
+r_results.txt
+search_results.txt
+scratch.mjs
+test-query.js
+test_admin_create.mjs
+test_db.js
+test_insert.mjs
+test_pg.js
+test_signup.mjs
