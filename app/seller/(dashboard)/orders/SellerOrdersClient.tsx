@@ -32,7 +32,7 @@ export default function SellerOrdersClient({ orders }: { orders: any[] }) {
   }
 
   return (
-    <div className="rounded-md border bg-card overflow-hidden shadow-sm">
+    <div className="rounded-md border bg-card overflow-x-auto shadow-sm overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">

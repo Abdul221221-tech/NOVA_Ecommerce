@@ -41,7 +41,7 @@ export function ExperienceStoryModal({ story }: ExperienceStoryModalProps) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-background rounded-3xl shadow-2xl p-8 z-[101] overflow-hidden"
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-background rounded-3xl shadow-2xl p-5 md:p-8 z-[101] overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-4">
                 <button 

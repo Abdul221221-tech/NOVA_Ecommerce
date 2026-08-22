@@ -19,7 +19,7 @@ export default function ShippingPage() {
       
       <div className="space-y-12">
         {/* How Shipping Works */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
               <Truck className="w-6 h-6" />
@@ -52,7 +52,7 @@ export default function ShippingPage() {
         </section>
 
         {/* Delivery Estimates */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl">
               <Clock className="w-6 h-6" />
@@ -63,7 +63,7 @@ export default function ShippingPage() {
             Delivery time depends on the seller's location, your delivery address, product availability, and the shipping method selected.
           </p>
           
-          <div className="overflow-x-auto mb-6">
+          <div className="overflow-x-auto mb-6 overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800">
@@ -103,7 +103,7 @@ export default function ShippingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Shipping Charges */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl">
                 <CreditCard className="w-6 h-6" />
@@ -122,7 +122,7 @@ export default function ShippingPage() {
           </section>
 
           {/* Free Shipping */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-2xl">
                 <Gift className="w-6 h-6" />
@@ -139,7 +139,7 @@ export default function ShippingPage() {
         </div>
 
         {/* Track Your Order */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl">
               <Search className="w-6 h-6" />
@@ -173,7 +173,7 @@ export default function ShippingPage() {
         </section>
 
         {/* Delays & Delivery Issues */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-2xl">
               <AlertTriangle className="w-6 h-6" />
@@ -206,7 +206,7 @@ export default function ShippingPage() {
         </section>
 
         {/* Lost or Damaged Packages */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl">
               <Package className="w-6 h-6" />
@@ -252,7 +252,7 @@ export default function ShippingPage() {
 
         {/* International Shipping & Address Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-2xl">
                 <Globe className="w-6 h-6" />
@@ -270,7 +270,7 @@ export default function ShippingPage() {
             </p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl">
                 <MapPin className="w-6 h-6" />
@@ -287,7 +287,7 @@ export default function ShippingPage() {
         </div>
 
         {/* Our Commitment */}
-        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 md:p-12 text-white shadow-lg text-center">
+        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-5 md:p-8 md:p-12 text-white shadow-lg text-center">
           <ShieldCheck className="w-12 h-12 mx-auto mb-6 text-white/90" />
           <h2 className="text-3xl font-bold mb-4">Our Commitment</h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
@@ -303,7 +303,7 @@ export default function ShippingPage() {
         </section>
 
         {/* FAQ */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl">
               <HelpCircle className="w-6 h-6" />

@@ -46,7 +46,7 @@ export default function ReturnsPage() {
         </section>
 
         {/* How Returns Work */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl">
               <ListChecks className="w-6 h-6" />
@@ -79,7 +79,7 @@ export default function ReturnsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Return Eligibility */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl">
                 <CheckCircle2 className="w-6 h-6" />
@@ -101,7 +101,7 @@ export default function ReturnsPage() {
           </section>
 
           {/* Products That May Not Be Returnable */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-2xl">
                 <PackageX className="w-6 h-6" />
@@ -125,7 +125,7 @@ export default function ReturnsPage() {
         </div>
 
         {/* Damaged, Defective or Incorrect Items */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-6">
@@ -155,7 +155,7 @@ export default function ReturnsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Refunds */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-2xl">
                 <CreditCard className="w-6 h-6" />
@@ -178,7 +178,7 @@ export default function ReturnsPage() {
 
           <div className="space-y-8">
             {/* Return Shipping */}
-            <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10 h-full">
+            <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10 h-full">
               <div className="flex items-center gap-4 mb-6">
                 <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl">
                   <Box className="w-6 h-6" />
@@ -197,7 +197,7 @@ export default function ReturnsPage() {
         </div>
 
         {/* Exchanges */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-2xl">
               <RotateCcw className="w-6 h-6" />
@@ -236,7 +236,7 @@ export default function ReturnsPage() {
         </div>
 
         {/* FAQ */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl">
               <HelpCircle className="w-6 h-6" />

@@ -49,7 +49,7 @@ export default async function PlatformAdminOrdersPage() {
         </TabsList>
         
         <TabsContent value="orders">
-          <div className="rounded-md border bg-card mt-4">
+          <div className="rounded-md border bg-card mt-4 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

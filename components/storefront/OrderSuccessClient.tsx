@@ -156,7 +156,7 @@ export default function OrderSuccessClient({
         {/* ORDER DETAILS CARD */}
         <motion.div 
           variants={itemVariants}
-          className="w-full max-w-2xl bg-surface-base/80 backdrop-blur-md border border-border/50 rounded-2xl p-8 shadow-md"
+          className="w-full max-w-2xl bg-surface-base/80 backdrop-blur-md border border-border/50 rounded-2xl p-5 md:p-8 shadow-md"
         >
           <h2 className="text-xl font-bold font-heading mb-6 border-b border-border/40 pb-4">Order Details</h2>
           

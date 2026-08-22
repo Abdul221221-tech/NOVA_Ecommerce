@@ -9,7 +9,7 @@ export async function ReviewSummaryBlock({ productId }: { productId: string }) {
   return (
     <div className="bg-muted/30 border rounded-xl p-6 mt-12 relative overflow-hidden">
       {/* Decorative background element */}
-      <div className="absolute top-0 right-0 p-8 opacity-5">
+      <div className="absolute top-0 right-0 p-5 md:p-8 opacity-5">
         <Sparkles className="w-32 h-32" />
       </div>
 

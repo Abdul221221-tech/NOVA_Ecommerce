@@ -23,7 +23,7 @@ export default function AdminRefundsClient({ refunds }: { refunds: any[] }) {
   }
 
   return (
-    <div className="rounded-md border bg-card mt-4">
+    <div className="rounded-md border bg-card mt-4 overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

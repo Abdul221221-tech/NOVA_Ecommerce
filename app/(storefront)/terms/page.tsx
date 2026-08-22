@@ -28,7 +28,7 @@ export default function TermsPage() {
       
       <div className="space-y-12">
         {/* Quick Overview */}
-        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 md:p-10 text-white shadow-lg border border-indigo-400 dark:border-indigo-500/30">
+        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-5 md:p-8 md:p-10 text-white shadow-lg border border-indigo-400 dark:border-indigo-500/30">
           <div className="flex items-center gap-3 mb-8">
             <FileText className="w-8 h-8 text-white/90" />
             <h2 className="text-3xl font-bold">Quick Overview</h2>
@@ -56,7 +56,7 @@ export default function TermsPage() {
         {/* Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* 1. The NOVA Marketplace */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
                 <Store className="w-6 h-6" />
@@ -77,7 +77,7 @@ export default function TermsPage() {
           </section>
 
           {/* 2. User Accounts */}
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl">
                 <Shield className="w-6 h-6" />
@@ -97,7 +97,7 @@ export default function TermsPage() {
         </div>
 
         {/* 3. Seller Responsibilities */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl">
               <UserCheck className="w-6 h-6" />
@@ -145,7 +145,7 @@ export default function TermsPage() {
         </div>
 
         {/* 8, 9, 10, 11 Section */}
-        <section className="bg-slate-50 dark:bg-slate-800/30 rounded-3xl p-8 md:p-10 border border-slate-100 dark:border-slate-800">
+        <section className="bg-slate-50 dark:bg-slate-800/30 rounded-3xl p-5 md:p-8 md:p-10 border border-slate-100 dark:border-slate-800">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
               <h3 className="font-bold text-lg mb-3 flex items-center gap-2"><CreditCard className="w-5 h-5 text-emerald-500" /> 8. Payments</h3>

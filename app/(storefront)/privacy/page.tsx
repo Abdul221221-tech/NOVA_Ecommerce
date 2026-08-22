@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
       
       <div className="space-y-12">
         {/* Your Privacy at NOVA */}
-        <section className="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-3xl p-8 md:p-10 text-white shadow-lg text-center border border-slate-700">
+        <section className="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-3xl p-5 md:p-8 md:p-10 text-white shadow-lg text-center border border-slate-700">
           <Lock className="w-12 h-12 mx-auto mb-6 text-white/90" />
           <h2 className="text-3xl font-bold mb-4">Your Privacy at NOVA</h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8">
@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* 1. Information We Collect */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
               <Database className="w-6 h-6" />
@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* 2. How We Use Your Information */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl">
               <Settings className="w-6 h-6" />
@@ -134,7 +134,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* 3. How We Share Your Information */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl">
               <Share2 className="w-6 h-6" />
@@ -162,7 +162,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* 4. Data Security */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 md:p-10 shadow-sm border border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-4 mb-6">
             <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-2xl">
               <Shield className="w-6 h-6" />
@@ -195,41 +195,41 @@ export default function PrivacyPolicyPage() {
 
         {/* Additional Policies Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">5. Your Information & Account</h2>
             <p className="text-sm text-muted-foreground mb-4">You can manage certain information directly through your NOVA account, including profile, shipping address, orders, wishlist, and seller info.</p>
             <p className="text-sm text-muted-foreground">If you believe your account has been accessed without authorization, contact NOVA Support as soon as possible.</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><Cookie className="w-5 h-5 text-amber-500" /> 6. Cookies</h2>
             <p className="text-sm text-muted-foreground mb-4">NOVA may use cookies or similar technologies where necessary to keep you signed in, maintain session functionality, remember preferences, and improve performance.</p>
             <p className="text-sm text-muted-foreground">You can manage cookie settings through your browser, although disabling certain cookies may affect some functionality.</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><Bot className="w-5 h-5 text-purple-500" /> 7. AI & Recommendations</h2>
             <p className="text-sm text-muted-foreground mb-4">NOVA may use AI-powered functionality to improve product discovery, analyzing search queries to understand user intent and provide relevant results.</p>
             <p className="text-sm text-muted-foreground">AI-assisted recommendations are intended to improve your shopping experience and do not guarantee specific products will be recommended.</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><Store className="w-5 h-5 text-blue-500" /> 8. Seller Privacy</h2>
             <p className="text-sm text-muted-foreground mb-4">Sellers may have additional information associated with their account, including store information and payment identifiers required for payouts.</p>
             <p className="text-sm text-muted-foreground">Seller info may be displayed publicly when necessary to operate the marketplace (store name, logo, description, etc.).</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">9. Third-Party Services</h2>
             <p className="text-sm text-muted-foreground mb-4">NOVA relies on third-party services (like Stripe and Supabase) that process information necessary to provide their services. These operate under their own applicable terms and privacy policies.</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><Users className="w-5 h-5 text-teal-500" /> 10. Children's Privacy</h2>
             <p className="text-sm text-muted-foreground">NOVA is not intentionally designed to collect personal information from children. If you believe a child has provided personal information to NOVA inappropriately, please contact us.</p>
           </section>
 
-          <section className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-white/10 md:col-span-2">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-white/10 md:col-span-2">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">11. Policy Updates</h2>
             <p className="text-sm text-muted-foreground mb-4">We may update this Privacy Policy from time to time to reflect changes to NOVA's services, new features, changes in technology, or legal/regulatory requirements.</p>
             <p className="text-sm text-muted-foreground">When we make significant changes, we will update the Last Updated date at the top of this page. We encourage you to review this page periodically.</p>

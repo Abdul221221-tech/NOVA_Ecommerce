@@ -31,7 +31,7 @@ export default async function CustomerOrdersPage() {
     return (
       <div className="container mx-auto px-4 py-24 max-w-4xl">
         <h1 className="text-3xl font-heading font-bold mb-8">Order History</h1>
-        <div className="bg-muted/10 p-8 text-center rounded-lg border">
+        <div className="bg-muted/10 p-5 md:p-8 text-center rounded-lg border">
           <p className="text-muted-foreground">You haven't placed any orders yet.</p>
         </div>
       </div>

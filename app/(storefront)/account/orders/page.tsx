@@ -51,7 +51,7 @@ export default async function CustomerAccountPage() {
       </div>
       
       {!orders || orders.length === 0 ? (
-        <div className="bg-surface-base border border-border/50 rounded-3xl p-12 text-center flex flex-col items-center">
+        <div className="bg-surface-base border border-border/50 rounded-3xl p-8 md:p-12 text-center flex flex-col items-center">
           <div className="w-24 h-24 bg-muted/30 rounded-full flex items-center justify-center mb-6">
             <Package className="w-10 h-10 text-muted-foreground" />
           </div>

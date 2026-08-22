@@ -25,7 +25,7 @@ export default function ComparePage() {
     <div className="container mx-auto px-4 py-12 min-h-screen overflow-x-auto pb-48">
       <h1 className="text-3xl font-heading font-bold mb-8">Compare Products</h1>
       
-      <div className="min-w-[800px] bg-surface-base border border-border/50 rounded-2xl shadow-sm overflow-hidden">
+      <div className="min-w-[800px] bg-surface-base border border-border/50 rounded-2xl shadow-sm overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr>

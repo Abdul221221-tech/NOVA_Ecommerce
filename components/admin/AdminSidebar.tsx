@@ -82,7 +82,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 border-r border-white/5 bg-slate-950 flex flex-col h-screen fixed left-0 top-0 text-slate-300">
+    <aside className="w-64 border-r border-white/5 bg-slate-950 flex flex-col h-full text-slate-300">
       <div className="h-16 flex items-center px-6 border-b border-white/5 bg-slate-900/50">
         <span className="font-heading text-xl font-bold tracking-widest text-white">
           NOVA <span className="text-fuchsia-500">ADMIN</span>

@@ -384,7 +384,7 @@ export function ProfileForm({ initialData, initialAddress }: { initialData: any,
                 </div>
               </motion.div>
 
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <motion.div variants={fieldVariants} className="space-y-2 group/field">
                   <Label htmlFor="date_of_birth" className="text-sm font-bold text-slate-900 dark:text-white/80 ml-2">Date of Birth</Label>
                   <div className="relative">
@@ -544,7 +544,7 @@ export function ProfileForm({ initialData, initialAddress }: { initialData: any,
                   </div>
                 </motion.div>
 
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <motion.div variants={fieldVariants} className="space-y-2 group/field">
                     <Label htmlFor="city" className="text-sm font-bold text-slate-900 dark:text-white/80 ml-2">City</Label>
                     <div className="relative">

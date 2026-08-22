@@ -52,7 +52,7 @@ export default function NewPromotionPage() {
               <p className="text-xs text-muted-foreground">Customers will enter this code at checkout.</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="discount_type">Discount Type</Label>
                 <Select name="discount_type" defaultValue="percentage">
@@ -71,7 +71,7 @@ export default function NewPromotionPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="starts_at">Start Date (Optional)</Label>
                 <Input id="starts_at" name="starts_at" type="datetime-local" />

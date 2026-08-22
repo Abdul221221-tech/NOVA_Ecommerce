@@ -119,8 +119,8 @@ export default function ContactPage() {
             {/* Contact Information (Left Column) */}
             <div className="lg:col-span-2 space-y-6">
               
-              <div className="anim-fade-up anim-delay-100 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-8 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="anim-fade-up anim-delay-100 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-5 md:p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-5 md:p-8 opacity-5">
                   <Mail className="w-32 h-32" />
                 </div>
                 <div className="relative z-10 flex flex-col gap-6">
@@ -137,8 +137,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="anim-fade-up anim-delay-200 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-8 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="anim-fade-up anim-delay-200 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-5 md:p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-5 md:p-8 opacity-5">
                   <MapPin className="w-32 h-32" />
                 </div>
                 <div className="relative z-10 flex flex-col gap-6">
@@ -155,8 +155,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="anim-fade-up anim-delay-300 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-8 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="anim-fade-up anim-delay-300 contact-card bg-white dark:bg-zinc-900 border border-border/60 rounded-[2rem] p-5 md:p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-5 md:p-8 opacity-5">
                   <Phone className="w-32 h-32" />
                 </div>
                 <div className="relative z-10 flex flex-col gap-6">
@@ -177,7 +177,7 @@ export default function ContactPage() {
 
             {/* Form Section (Right Column) */}
             <div className="lg:col-span-3 anim-fade-up anim-delay-400">
-              <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/20 dark:border-white/5 rounded-[2.5rem] p-8 md:p-14 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+              <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/20 dark:border-white/5 rounded-[2.5rem] p-5 md:p-8 md:p-14 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
                 
                 {state.success ? (
                   <div className="text-center py-20 space-y-6" style={{ animation: 'customFadeUp 0.6s forwards' }}>

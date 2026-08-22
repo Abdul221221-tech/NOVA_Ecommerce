@@ -145,7 +145,7 @@ export default function HelpCenterPage() {
           {topics.map((topic, i) => (
             <motion.div key={i} variants={itemVariants}>
               <Link href={topic.href} className="block group h-full">
-                <div className="h-full bg-white dark:bg-zinc-900/50 border border-border/50 rounded-[2rem] p-8 transition-all duration-250 ease-out hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-accent-primary/50">
+                <div className="h-full bg-white dark:bg-zinc-900/50 border border-border/50 rounded-[2rem] p-5 md:p-8 transition-all duration-250 ease-out hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-accent-primary/50">
                   <div className="w-14 h-14 rounded-2xl bg-accent-primary/10 flex items-center justify-center mb-6 group-hover:bg-accent-primary transition-colors duration-250 ease-out shadow-sm">
                     <topic.icon className="w-6 h-6 text-accent-primary group-hover:text-white transition-colors duration-250 ease-out" strokeWidth={2} />
                   </div>
@@ -268,7 +268,7 @@ export default function HelpCenterPage() {
 
       {/* --- SUPPORT CHANNELS (Still need help?) --- */}
       <section className="py-24 md:py-32 container max-w-[1200px] mx-auto px-4">
-        <div className="bg-accent-primary/10 dark:bg-accent-primary/5 border border-accent-primary/20 rounded-[3rem] p-8 md:p-16 text-center max-w-[1000px] mx-auto">
+        <div className="bg-accent-primary/10 dark:bg-accent-primary/5 border border-accent-primary/20 rounded-[3rem] p-5 md:p-8 md:p-16 text-center max-w-[1000px] mx-auto">
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Still need help?</h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-16">
             Can't find the answer you're looking for? Our support team is here to assist you across multiple channels.
@@ -282,7 +282,7 @@ export default function HelpCenterPage() {
             className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left"
           >
             {/* Live Chat */}
-            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
+            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-5 md:p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -305,7 +305,7 @@ export default function HelpCenterPage() {
             </motion.div>
 
             {/* Email Support */}
-            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
+            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-5 md:p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -329,7 +329,7 @@ export default function HelpCenterPage() {
             </motion.div>
 
             {/* Seller Support */}
-            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
+            <motion.div variants={itemVariants} className="group bg-white dark:bg-zinc-900 border border-border/50 rounded-3xl p-5 md:p-8 transition-all duration-250 ease-out hover:shadow-xl hover:shadow-accent-primary/10 hover:-translate-y-1 hover:border-accent-primary/50">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}

@@ -93,7 +93,7 @@ export function NotificationDropdown({ initialNotifications = [], initialUnreadC
         </AnimatePresence>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0 rounded-2xl shadow-2xl border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
+      <DropdownMenuContent align="end" className="w-[calc(100vw-1rem)] sm:w-96 p-0 rounded-2xl shadow-2xl border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
         <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
           <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
           {notifications.length > 0 && (
