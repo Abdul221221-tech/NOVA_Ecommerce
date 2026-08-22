@@ -59,9 +59,9 @@ export function CategoryScroller({ categories }: { categories: CategoryWithImage
           <Link 
             key={cat.id} 
             href={`/categories/${cat.slug}`} 
-            className="flex flex-col items-center gap-4 snap-start shrink-0 group/item w-32 md:w-40"
+            className="flex flex-col items-center gap-4 snap-start shrink-0 group/item w-24 sm:w-32 md:w-40"
           >
-            <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden rounded-full bg-muted/20 border-2 border-transparent transition-colors group-hover/item:border-accent-primary/20">
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 overflow-hidden rounded-full bg-muted/20 border-2 border-transparent transition-colors group-hover/item:border-accent-primary/20">
               <Image
                 src={cat.imageUrl}
                 alt={cat.name}
@@ -70,7 +70,7 @@ export function CategoryScroller({ categories }: { categories: CategoryWithImage
                 sizes="(max-width: 768px) 128px, 160px"
               />
             </div>
-            <span className="text-sm md:text-base font-semibold text-center leading-tight transition-colors group-hover/item:text-accent-primary">
+            <span className="text-[11px] sm:text-sm md:text-base font-semibold text-center leading-tight break-words w-full px-1 transition-colors group-hover/item:text-accent-primary">
               {cat.name}
             </span>
           </Link>

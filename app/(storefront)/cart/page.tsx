@@ -127,7 +127,7 @@ export default function CartPage() {
           
           <div className="space-y-6">
             {Object.values(itemsByStore).map((storeGroup: any, idx) => (
-              <div key={idx} className="bg-surface-base p-6 rounded-2xl border border-border/50 shadow-sm">
+              <div key={idx} className="bg-surface-base p-4 sm:p-6 rounded-2xl border border-border/50 shadow-sm">
                 <div className="flex items-center justify-between mb-6 pb-4 border-b">
                   <h3 className="font-semibold text-lg flex items-center gap-2">
                     <span className="text-muted-foreground text-sm">Sold by</span>
@@ -137,8 +137,8 @@ export default function CartPage() {
                 
                 <div className="space-y-6">
                   {storeGroup.items.map((item: any) => (
-                    <div key={item.id} className="flex gap-6">
-                      <div className="relative size-24 sm:size-32 rounded-xl overflow-hidden bg-muted/20 shrink-0 border">
+                    <div key={item.id} className="flex gap-3 sm:gap-6">
+                      <div className="relative size-20 sm:size-24 md:size-32 rounded-xl overflow-hidden bg-muted/20 shrink-0 border">
                         {item.image ? (
                           <Image src={item.image} alt={item.title} fill className="object-cover" />
                         ) : (

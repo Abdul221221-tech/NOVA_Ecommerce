@@ -45,7 +45,7 @@ export default async function CustomerAccountPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl min-h-[70vh]">
+    <div className="w-full min-h-[70vh]">
       <div className="flex items-center gap-4 mb-10">
         <h1 className="font-heading text-4xl md:text-5xl font-black tracking-tight">My Orders</h1>
       </div>

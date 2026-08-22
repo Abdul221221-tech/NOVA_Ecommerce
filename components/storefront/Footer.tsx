@@ -25,7 +25,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative overflow-hidden bg-[#0c0c0e] text-slate-300 py-16 md:py-24 mt-auto border-t border-white/5">
+    <footer className="relative overflow-hidden bg-[#0c0c0e] text-slate-300 py-10 md:py-24 mt-auto border-t border-white/5">
       
       {/* 1. Ambient Background Detail */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -51,7 +51,7 @@ export function Footer() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-8"
         >
           {/* Brand Column */}
           <motion.div variants={itemVariants} className="space-y-6">
@@ -117,7 +117,7 @@ export function Footer() {
                 { label: 'Bestsellers', href: '#' }
               ].map((link, i) => (
                 <li key={i}>
-                  <Link href={link.href} className="group relative inline-flex items-center text-slate-400 hover:text-amber-500 hover:translate-x-1 transition-all duration-200 ease-out">
+                  <Link href={link.href} className="group relative inline-flex items-center py-1.5 text-slate-400 hover:text-amber-500 hover:translate-x-1 transition-all duration-200 ease-out">
                     <span>{link.label}</span>
                     <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-amber-500 origin-left scale-x-0 transition-transform duration-200 ease-out group-hover:scale-x-100" />
                   </Link>
@@ -141,7 +141,7 @@ export function Footer() {
                 { label: 'Seller Portal', href: '/seller/login' }
               ].map((link, i) => (
                 <li key={i}>
-                  <Link href={link.href} className="group relative inline-flex items-center text-slate-400 hover:text-amber-500 hover:translate-x-1 transition-all duration-200 ease-out">
+                  <Link href={link.href} className="group relative inline-flex items-center py-1.5 text-slate-400 hover:text-amber-500 hover:translate-x-1 transition-all duration-200 ease-out">
                     <span>{link.label}</span>
                     <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-amber-500 origin-left scale-x-0 transition-transform duration-200 ease-out group-hover:scale-x-100" />
                   </Link>
@@ -170,8 +170,8 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
           <p>© {new Date().getFullYear()} NOVA Marketplace. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors duration-200">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors duration-200 py-2">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors duration-200 py-2">Terms of Service</Link>
           </div>
         </div>
       </div>

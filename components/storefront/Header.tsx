@@ -129,8 +129,8 @@ export function Header({
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={`sticky top-0 z-50 w-full transition-all duration-500 flex justify-center ${isScrolled ? 'pt-2 pb-2' : 'pt-0 pb-0'}`}
     >
-      <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-white/20 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
-        <div className="flex items-center gap-4 md:gap-8 justify-between h-full">
+      <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-white/20 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-2 sm:px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
+        <div className="flex items-center gap-1 sm:gap-4 md:gap-8 justify-between h-full">
           
           {/* Left: Mobile Menu & Logo */}
           <div className="flex items-center gap-4 shrink-0">
@@ -197,9 +197,9 @@ export function Header({
               </SheetContent>
             </Sheet>
 
-            <Link href="/" className="flex items-center space-x-3 focus:outline-none group shrink-0 relative overflow-hidden px-2 py-1 -ml-2 rounded-xl">
+            <Link href="/" className="flex items-center space-x-1 sm:space-x-3 focus:outline-none group shrink-0 relative overflow-hidden px-2 py-1 -ml-2 rounded-xl">
               <motion.div 
-                className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] border border-white/10 transition-shadow duration-500 z-10"
+                className="relative w-8 h-8 sm:w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]0 sm:h-10 md:w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 md:h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] border border-white/10 transition-shadow duration-500 z-10"
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -209,7 +209,7 @@ export function Header({
               </motion.div>
               <div className="relative z-10 overflow-hidden pr-2">
                 <span 
-                  className="font-heading text-2xl md:text-3xl font-black tracking-tighter inline-block relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground group-hover:from-fuchsia-500 group-hover:to-orange-400 group-hover:translate-x-1 transition-all duration-500 ease-out"
+                  className="font-heading text-xl sm:text-2xl md:text-3xl font-black tracking-tighter inline-block relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground group-hover:from-fuchsia-500 group-hover:to-orange-400 group-hover:translate-x-1 transition-all duration-500 ease-out"
                 >
                   NOVA
                 </span>
@@ -344,7 +344,7 @@ export function Header({
                       </span>
                       <Button 
                         onClick={() => { applyNavigation(); setActiveMegaMenu(null); }} 
-                        className="rounded-full shadow-lg shadow-accent-primary/20 bg-accent-primary hover:bg-accent-primary/90 text-white font-bold transition-all hover:scale-105 active:scale-95 px-6"
+                        className="rounded-full shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]g shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]ccent-primary/20 bg-accent-primary hover:bg-accent-primary/90 text-white font-bold transition-all hover:scale-105 active:scale-95 px-6"
                       >
                         View Collection <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
@@ -366,7 +366,7 @@ export function Header({
           {/* Mobile Search Toggle */}
           <button 
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-            className="lg:hidden relative p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex"
+            className="lg:hidden relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex"
             aria-label="Search"
           >
              <Search className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
@@ -375,7 +375,7 @@ export function Header({
           <TooltipProvider delay={0}>
             <Tooltip>
               <TooltipTrigger>
-                <Link href={sellerCentreLink} className="hidden sm:inline-flex relative p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
+                <Link href={sellerCentreLink} className="hidden sm:inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
                   <Store className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
                 </Link>
               </TooltipTrigger>
@@ -386,7 +386,7 @@ export function Header({
 
             <Tooltip>
               <TooltipTrigger>
-                <Link href="/wishlist" className="relative p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex">
+                <Link href="/wishlist" className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex">
                   <Heart className={`w-5 h-5 transition-colors duration-300 ${wishlistItems?.length > 0 ? 'fill-indigo-600 text-indigo-600' : 'text-foreground group-hover:text-indigo-600'}`} />
                   {wishlistItems?.length > 0 && (
                     <motion.span 
@@ -415,7 +415,7 @@ export function Header({
           <div className="relative">
             <button 
               onClick={() => setIsCartOpen(!isCartOpen)}
-              className="relative p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
+              className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
               aria-label="View Cart"
             >
               <ShoppingCart className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
@@ -434,7 +434,7 @@ export function Header({
 
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="rounded-full bg-slate-100 dark:bg-slate-800 w-12 h-12 border border-border/50 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none group overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+              <DropdownMenuTrigger className="rounded-full bg-slate-100 dark:bg-slate-800 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 h-12 border border-border/50 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none group overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                   {profile?.profile_photo_url ? (
                     <img src={profile.profile_photo_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
@@ -464,7 +464,7 @@ export function Header({
                     {/* Profile Header section */}
                     <DropdownMenuGroup className="relative z-30 mb-2">
                       <DropdownMenuLabel className="p-3 flex items-center gap-4">
-                        <div className="relative w-12 h-12 rounded-full p-[2px] bg-gradient-to-br from-orange-400 to-purple-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                        <div className="relative w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 h-12 rounded-full p-[2px] bg-gradient-to-br from-orange-400 to-purple-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
                           <div className="w-full h-full rounded-full bg-[#130922] flex items-center justify-center overflow-hidden">
                              {profile?.profile_photo_url ? (
                                 <img src={profile.profile_photo_url} alt="Profile" className="w-full h-full object-cover" />
@@ -484,7 +484,7 @@ export function Header({
                     
                     <DropdownMenuGroup className="relative z-30 px-1 py-1 space-y-1">
                       <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                        <Link href="/account" className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300">
+                        <Link href="/account" className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/15 to-purple-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-orange-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
                           
@@ -497,7 +497,7 @@ export function Header({
                       </DropdownMenuItem>
 
                       <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                        <Link href="/account/orders" className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300">
+                        <Link href="/account/orders" className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/15 to-pink-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-purple-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
                           
@@ -510,7 +510,7 @@ export function Header({
                       </DropdownMenuItem>
 
                       <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                        <Link href="/wishlist" className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300">
+                        <Link href="/wishlist" className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                           <div className="absolute inset-0 bg-gradient-to-r from-pink-500/15 to-rose-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-pink-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(236,72,153,0.8)]" />
                           
@@ -528,7 +528,7 @@ export function Header({
                     <DropdownMenuGroup className="relative z-30 px-1 py-1 space-y-1">
                       {(role === 'seller' || role === 'platform_admin') && (
                         <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                          <Link href={role === 'seller' ? '/seller' : '/platform-admin'} className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300">
+                          <Link href={role === 'seller' ? '/seller' : '/platform-admin'} className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-indigo-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-blue-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                             
@@ -542,7 +542,7 @@ export function Header({
                       )}
                       
                       <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                        <Link href="/account/settings" className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300">
+                        <Link href="/account/settings" className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/15 to-purple-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-indigo-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(99,102,241,0.8)]" />
                           
@@ -560,7 +560,7 @@ export function Header({
                     <div className="relative z-30 px-1 py-1 pb-2">
                       <form onSubmit={handleLogout}>
                         <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                          <button type="submit" disabled={isPending} className="relative group flex items-center justify-between w-full p-2.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <button type="submit" disabled={isPending} className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                             <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-rose-600/10 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-red-500 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
                             
@@ -596,32 +596,35 @@ export function Header({
               >
                 Sign In
                 <div className={`absolute -bottom-1.5 left-0 h-[2px] rounded-full bg-foreground transition-all duration-300 ease-out ${
-                  pathname === '/login' ? 'w-full' : 'w-0 group-hover:w-full'
+                  pathname === '/login' ? 'w-full' : 'w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] group-hover:w-full'
                 }`} />
               </Link>
               
-              <Link 
-                href="/signup" 
-                className={`group relative flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full border transition-all duration-300 ease-out overflow-hidden hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                  pathname === '/signup' 
-                    ? 'border-indigo-500/30 bg-indigo-50/50 shadow-[0_2px_12px_rgba(99,102,241,0.15)] dark:border-indigo-400/30 dark:bg-indigo-500/10' 
-                    : 'border-border/80 bg-background shadow-sm hover:shadow-md hover:border-border hover:bg-muted/50'
-                }`}
-              >
-                {/* Subtle animated hover glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/50 to-transparent dark:via-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                
-                <span className={`relative z-10 text-[14px] font-semibold tracking-wide transition-colors ${
-                  pathname === '/signup' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'
-                }`}>
-                  Sign Up
-                </span>
-                
-                {/* Circular Arrow Badge */}
-                <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700/50 shadow-sm transition-all duration-300 ease-out group-hover:bg-foreground group-hover:text-background group-hover:border-foreground group-hover:scale-105">
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-[2px]" />
-                </div>
-              </Link>
+              <Link href="/account" className="md:hidden relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none">
+    <User className="w-5 h-5 text-foreground" />
+  </Link>
+  <Link 
+    href="/signup" 
+    className={`hidden md:flex group relative items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full border transition-all duration-300 ease-out overflow-hidden hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+      pathname === '/signup' 
+        ? 'border-indigo-500/30 bg-indigo-50/50 shadow-[0_2px_12px_rgba(99,102,241,0.15)] dark:border-indigo-400/30 dark:bg-indigo-500/10' 
+        : 'border-border/80 bg-background shadow-sm hover:shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]d hover:border-border hover:bg-muted/50'
+    }`}
+  >
+    {/* Subtle animated hover glow */}
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/50 to-transparent dark:via-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+    
+    <span className={`relative z-10 text-[14px] font-semibold tracking-wide transition-colors ${
+      pathname === '/signup' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'
+    }`}>
+      Sign Up
+    </span>
+    
+    {/* Circular Arrow Badge */}
+    <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700/50 shadow-sm transition-all duration-300 ease-out group-hover:bg-foreground group-hover:text-background group-hover:border-foreground group-hover:scale-105">
+      <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-[2px]" />
+    </div>
+  </Link>
             </div>
           )}
         </div>

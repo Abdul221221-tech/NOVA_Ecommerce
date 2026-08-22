@@ -27,7 +27,7 @@ export function MobileBottomNav() {
   }
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border/50 pb-safe">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)]">
       <nav className="flex items-center justify-between px-2 h-[60px]">
         {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
@@ -37,19 +37,19 @@ export function MobileBottomNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`relative flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
+              className={`relative flex flex-col items-center justify-center flex-1 min-w-0 h-full space-y-1 transition-colors ${
                 isActive ? 'text-accent-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <div className="relative">
-                <Icon className={`w-6 h-6 ${isActive ? 'fill-accent-primary/20' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
+                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${isActive ? 'fill-accent-primary/20' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-accent-primary text-white text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center shadow-sm">
+                  <span className="absolute -top-1.5 -right-2 bg-accent-primary text-white text-[9px] sm:text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center shadow-sm">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] tracking-wide ${isActive ? 'font-semibold' : 'font-medium'}`}>
+              <span className={`text-[9px] sm:text-[10px] tracking-wide ${isActive ? 'font-semibold' : 'font-medium'}`}>
                 {item.label}
               </span>
             </Link>
