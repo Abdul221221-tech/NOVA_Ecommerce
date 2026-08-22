@@ -1,733 +1,258 @@
-# NOVA Ecommerce
+# NOVA E-Commerce
 
-A modern, full-stack multi-vendor marketplace built with Next.js 15, Supabase, and TypeScript.
+> **A modern, full-stack multi-vendor marketplace built for speed, elegance, and scale.**
+
+NOVA is a high-performance e-commerce marketplace platform. Built from the ground up to support multiple independent sellers, NOVA provides a seamless shopping experience for customers while offering powerful, dedicated management tools for sellers and platform administrators.
 
 ---
 
-## 🚀 Quick Start
+## 📖 Project Overview
 
-```bash
-# Install dependencies
-npm install
+Traditional e-commerce platforms often struggle to balance the needs of multiple vendors while maintaining a unified shopping experience. NOVA solves this by providing a unified storefront that elegantly aggregates products from independent sellers, securely managing authentication, cart state, order processing, and seller workflows under one roof.
 
-# Set up environment variables
-cp .env.example .env.local
+### Target Users
+- **Customers**: Can browse products, manage their wishlist and cart, securely checkout, and track their orders.
+- **Sellers**: Independent vendors who manage their own stores, products, inventory, and order fulfillment.
+- **Administrators**: Platform owners who oversee marketplace health, manage global categories/brands, approve sellers, and monitor platform-wide analytics.
 
-# Run development server
-npm run dev
-```
+### The Marketplace Workflow
+1. **Sellers** register and list their products on the platform.
+2. **Customers** discover products through search, categories, or brands, and place orders.
+3. The platform securely processes the checkout.
+4. **Sellers** receive order notifications and fulfill their respective items.
+5. **Customers** track their order status and manage returns from their dashboard.
+
+---
+
+## ✨ Key Features
+
+### Customer Features
+- **Modern Storefront**: Highly interactive UI with smooth animations.
+- **Personalized Dashboard**: Track orders, manage profile settings, and view return/exchange history.
+- **Cart & Wishlist**: Persistent cart and wishlist functionality securely synced with user accounts.
+
+### Seller Features
+- **Dedicated Dashboard**: Independent portal (`/seller`) for managing store operations.
+- **Product Management**: Full CRUD capabilities for products, including image uploads and stock management.
+- **Order Fulfillment**: Track, process, and update the status for customer orders assigned to the seller.
+
+### Admin Features
+- **Platform Oversight**: Centralized dashboard (`/platform-admin`) for monitoring the entire marketplace.
+- **Category & Brand Management**: Create and manage global categories and brands available to all sellers.
+- **User Management**: View customer and seller data, and manage overall platform integrity.
+
+### Core Capabilities
+- **Authentication**: Secure role-based access control (Customer, Seller, Admin) powered by Supabase Auth.
+- **Search & Filtering**: Dynamic product discovery by category, brand, and search terms.
+- **Address & Checkout**: Streamlined checkout flow with support for saved shipping addresses and Stripe integration.
+- **Notifications**: Dropdown notifications for order updates and platform alerts.
+- **Responsive Design**: Flawless experience across all device sizes, down to 320px mobile screens.
+
+---
+
+## ❓ Q&A / How NOVA Works
+
+**What is NOVA?**
+NOVA is a multi-vendor e-commerce platform where independent sellers can list products for customers to discover and purchase in a unified storefront.
+
+**Who can use NOVA?**
+The platform supports three distinct roles: everyday shoppers (Customers), independent vendors (Sellers), and marketplace operators (Admins).
+
+**How does customer shopping work?**
+Customers browse the storefront, utilize category/brand filters, add items to their cart, and proceed through a secure checkout. 
+
+**How does seller functionality work?**
+Sellers log into a completely isolated dashboard where they can add products to the global catalog, monitor their own sales analytics, and update the shipping status of their orders.
+
+**How are products managed?**
+Sellers create and manage their own products (including variants, stock, and images). Admins oversee global categories and brands to ensure marketplace consistency.
+
+**How does cart/wishlist work?**
+State is managed efficiently across the application. Logged-in users have their cart and wishlist data securely synced to the database, ensuring persistence across devices.
+
+**How does order management work?**
+A single customer order might contain items from multiple sellers. NOVA intelligently splits order items so each seller only sees and fulfills the items belonging to their store.
+
+**How does the responsive design work?**
+The UI uses fluid Tailwind CSS grids and intelligent mobile-first components (like off-canvas menus and bottom navigation bars) to ensure full functionality on mobile devices without horizontal scrolling.
+
+**What technologies are used?**
+NOVA leverages the Next.js App Router, Supabase (PostgreSQL + Auth), Tailwind CSS, and Framer Motion.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Framework**: Next.js (App Router, Server Components, Server Actions)
+- **Library**: React
+- **Language**: TypeScript
+- **Database & Backend**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Payments**: Stripe
+- **Deployment**: Vercel
 
 ---
 
 ## 🏗️ Project Architecture
 
-The project follows a modern Next.js App Router architecture.
+NOVA follows a modern, scalable architecture separating client-side interactivity from secure server-side logic:
+- **Frontend**: Utilizes Next.js Server Components for SEO and fast initial loads, reserving Client Components strictly for interactive elements (like cart management and animations).
+- **Backend**: Relies on Next.js Server Actions for secure database mutations, communicating directly with Supabase.
+- **Database**: PostgreSQL hosted on Supabase, utilizing Row Level Security (RLS) to ensure data isolation.
 
-A typical structure may look like:
-
+### Folder Structure
 ```text
 NOVA_Ecommerce/
-│
 ├── app/
-│   ├── admin/
-│   ├── seller/
-│   ├── shop/
-│   ├── products/
-│   ├── cart/
-│   ├── checkout/
-│   ├── orders/
-│   ├── profile/
-│   └── ...
-│
+│   ├── (storefront)/       # Customer-facing website (Home, Shop, Cart, Checkout)
+│   ├── account/            # Customer profile and order history
+│   ├── seller/             # Isolated Seller Dashboard
+│   ├── platform-admin/     # Isolated Admin Dashboard
+│   ├── api/                # API routes and webhooks
+│   └── actions/            # Secure Server Actions
 ├── components/
-│   ├── admin/
-│   ├── seller/
-│   ├── products/
-│   ├── cart/
-│   ├── checkout/
-│   └── ...
-│
-├── lib/
-│   ├── supabase/
-│   ├── auth/
-│   └── ...
-│
-├── public/
-│   ├── images/
-│   └── ...
-│
-├── types/
-│   └── ...
-│
-├── styles/
-│   └── ...
-│
-├── .env.local
-├── .gitignore
-├── package.json
-├── tsconfig.json
-└── README.md
+│   ├── storefront/         # UI components for the storefront
+│   ├── seller/             # UI components for the seller dashboard
+│   ├── admin/              # UI components for the admin dashboard
+│   ├── auth/               # Authentication forms and wrappers
+│   └── ui/                 # Reusable primitive UI components (shadcn/ui)
+└── lib/
+    ├── supabase/           # Supabase client configurations
+    └── utils/              # Helper functions
 ```
 
-> The actual directory structure should be treated as the source of truth. The above structure describes the architectural organization rather than requiring folders that do not already exist.
+---
+
+## 📦 Main Project Modules
+
+- **Home**: Landing page featuring hero carousels, featured categories, and new arrivals.
+- **Shop & Categories**: Dynamic product grids with active filtering by brand and category.
+- **Product Details**: Immersive product pages with image galleries, related products, and add-to-cart functionality.
+- **Cart & Wishlist**: Dedicated slide-out and full-page modules for managing desired items.
+- **Checkout**: Multi-step checkout and address selection mapped to a Stripe payment flow.
+- **Profile & Orders**: Customer portal to track active orders, manage addresses, and request returns/exchanges.
+- **Seller Dashboard**: Complete vendor CMS for analytics, product inventory, promotions, and order fulfillment.
+- **Admin Dashboard**: Master control panel for global platform oversight, category/brand creation, and refunds.
+- **Authentication**: Custom branded login and registration flows handling all three user roles.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Projects / Development Work
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| Styling | Tailwind CSS |
-| Animations | Framer Motion |
-| Payments | Stripe |
-| Deployment | Vercel |
-| Package Manager | npm |
-
----
-
-## 🎨 Design System
-
-NOVA uses a cohesive design system built on:
-
-* **Tailwind CSS** — Utility-first styling
-* **Framer Motion** — Smooth animations and transitions
-* **Custom Components** — Reusable UI primitives
-* **Design Tokens** — Consistent colors, spacing, typography
-
-### Visual Identity
-
-The goal is to make the interface feel:
-
-> **Premium + Modern + Fast + Interactive**
-
-rather than looking like a generic marketplace template.
-
----
-
-## 🎬 Animations
-
-Framer Motion is used for interactive motion and micro-interactions.
-
-Examples include:
-
-* Hover animations
-* Product card interactions
-* Button feedback
-* Page transitions
-* Loading animations
-* Staggered content
-* Modal transitions
-
-Animations should enhance usability rather than become a distraction.
+Major development milestones achieved in this project:
+- **Customer Marketplace**: Engineered a fluid storefront with advanced routing and state management.
+- **Seller System**: Built a secure, isolated vendor portal.
+- **Admin Management**: Developed centralized management tools for maintaining catalog structure.
+- **Responsive/Mobile Experience**: Overhauled navigation systems (including mobile bottom nav and dynamic off-canvas sidebars) to guarantee flawless screen support down to 320px width.
+- **Product and Order Management**: Implemented complex relational data models to handle multi-vendor order splitting.
+- **Authentication and Database Integration**: Synced complex platform state securely using Supabase Auth and database operations.
 
 ---
 
 ## 📱 Responsive Design
 
-NOVA is designed for multiple screen sizes.
-
-The UI adapts to:
-
-```text
-Desktop
-Laptop
-Tablet
-Mobile
-```
-
-Components such as:
-
-* Navigation
-* Filters
-* Product grids
-* Checkout
-* Cards
-* Forms
-* Dashboards
-
-are designed to adapt to smaller screens.
+NOVA is meticulously crafted to provide a native-feeling experience across all devices:
+- **Desktop & Laptop**: Expansive grids, hover-activated mega menus, and immersive imagery.
+- **Tablet**: Adaptive layouts that gracefully scale down columns and touch targets.
+- **Mobile**: Thumb-friendly bottom navigation replacing top-heavy headers.
+- **Small Mobile (320px)**: Carefully calculated paddings and font scaling to prevent horizontal overflow on mini iPhones and older devices.
 
 ---
 
-## ⚡ Performance
+## ⚙️ Installation & Setup
 
-Performance is a major consideration in NOVA.
+To run NOVA locally:
 
-The application uses modern Next.js concepts such as:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/nova-ecommerce.git
+   cd nova-ecommerce
+   ```
 
-* App Router
-* Server Components
-* Server-side rendering where appropriate
-* Client Components only where needed
-* Optimized data fetching
-* Caching/revalidation where appropriate
-* Optimized assets
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-The objective is to avoid shipping unnecessary JavaScript to the browser.
+3. **Set up Environment Variables**
+   Copy the example environment file and fill in your Supabase and Stripe credentials:
+   ```bash
+   cp .env.example .env.local
+   ```
 
----
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   Visit `http://localhost:3000` to view the application.
 
-## 🧩 Server Components vs Client Components
-
-NOVA uses Next.js's server/client architecture.
-
-### Server Components
-
-Used where interactive browser state is not required.
-
-Examples:
-
-* Product data rendering
-* Server-side data fetching
-* Static content
-* Layout structures
-
-### Client Components
-
-Used where browser interaction is required.
-
-Examples:
-
-* Interactive buttons
-* Wishlist actions
-* Cart interactions
-* Forms
-* Animations
-* Client-side state
-
-The project attempts to keep the client boundary as small as practical.
+5. **Build for Production**
+   ```bash
+   npm run build
+   npm run start
+   ```
 
 ---
 
-## ⚡ Server Actions
+## 🔐 Environment Variables
 
-Server Actions can be used for server-side mutations such as:
-
-* Updating profile information
-* Newsletter subscription
-* Password changes
-* Database mutations
-* Other authenticated operations
-
-This reduces unnecessary client-side API boilerplate while keeping sensitive operations on the server.
-
----
-
-## 🧯 Error Handling
-
-A production-style application must assume that things will fail.
-
-NOVA accounts for cases such as:
-
-* Network failure
-* Invalid input
-* Missing database records
-* Unauthorized requests
-* Expired sessions
-* Empty search results
-* Empty cart
-* Out-of-stock products
-* Failed mutations
-* Payment problems
-
-The objective is to provide users with understandable feedback rather than exposing raw errors.
-
----
-
-## 🔍 Empty States
-
-Empty states are important for a good user experience.
-
-Examples:
-
-```text
-No products found
-No wishlist items
-No cart items
-No orders yet
-No notifications
-No seller products
-No analytics data
-```
-
-Instead of leaving the page blank, NOVA can provide useful guidance and actions.
-
----
-
-## 🔄 Loading States
-
-Loading states are used where data may take time to appear.
-
-Examples include:
-
-* Product loading
-* Search loading
-* Order loading
-* Dashboard loading
-* Form submission
-* Authentication checks
-
-Skeleton loaders can be used where appropriate to reduce layout shifts.
-
----
-
-## 🔐 Security Considerations
-
-Security is one of the most important parts of a multi-vendor marketplace.
-
-Important considerations include:
-
-* Secure authentication
-* Authorization
-* RLS policies
-* Server-side validation
-* Input validation
-* Protected routes
-* Secure environment variables
-* No exposure of private API keys
-* Seller data isolation
-* Admin access restrictions
-* Payment security
-
-Frontend restrictions alone are not sufficient.
-
----
-
-## 🛡️ Admin Dashboard
-
-The admin dashboard provides platform-wide oversight.
-
-### Core Sections
-
-* **Overview** — Key metrics, recent activity, platform health
-* **Products** — Product management, approvals, inventory
-* **Categories** — Category hierarchy, subcategories
-* **Brands** — Brand management
-* **Customers** — Customer management, order history
-* **Orders** — Order management, fulfillment
-* **Returns/Exchanges** — Return and exchange requests
-* **Payments** — Transaction monitoring
-* **Payouts** — Platform-level financial overview
-* **Support** — Customer support tickets
-* **Marketing** — Coupons, banners, promotions
-* **Settings** — Platform configuration
-
-### Product Management
-
-Admin can manage all products across the marketplace.
-
-Product management includes:
-
-* Product approval/rejection
-* Product editing
-* Product deletion
-* Status management (active/inactive/draft)
-* Featured product selection
-* Bulk actions
-
-### Image Management
-
-Product images are handled with care:
-
-```text
-Image 1
-Primary Cover
-
-Image 2
-Gallery Image
-
-Image 3
-Gallery Image
-```
-
-Uploaded images should provide:
-
-* Upload progress/loading state
-* Immediate preview
-* Successful upload confirmation
-* Error handling
-* Retry functionality
-* Persistent image URL
-* Correct association with the product
-
----
-
-## 📊 Inventory Management
-
-Inventory can be managed inside the Products section.
-
-Inventory includes:
-
-* Available stock
-* Low stock
-* Out of stock
-* Stock adjustments
-* Product variants
-* Stock history
-
-Stock should be connected to actual product data rather than static frontend values.
-
----
-
-## 🗂️ Categories
-
-Admin can manage website-wide categories.
-
-Category management includes:
-
-* Main categories
-* Subcategories
-* Product count
-* Status
-* Created date
-* Add
-* Edit
-* Delete
-* Activate/deactivate
-
-Categories should be reflected consistently throughout the marketplace.
-
----
-
-## 🏷️ Brands
-
-Brand management includes:
-
-* Brand name
-* Logo
-* Description
-* Product count
-* Status
-* Created date
-* Add
-* Edit
-* Delete
-* Activate/deactivate
-* View products
-
----
-
-## 👥 Customer Management
-
-Admin can view necessary customer information:
-
-* Name
-* Email
-* Phone
-* Address
-* Total orders
-* Purchase history
-* Account status
-* Joined date
-* Last order
-
-Customer details may include:
-
-* Saved delivery addresses
-* Order history
-* Returns
-* Refunds
-
-### Password Privacy
-
-Customer passwords must **never** be visible to administrators.
-
----
-
-## 💳 Payments
-
-The Payments section provides platform-level transaction information.
-
-Metrics include:
-
-* Total transactions
-* Successful payments
-* Failed payments
-* Pending payments
-* Refunded payments
-* Total transaction value
-
-Payment records include:
-
-* Transaction ID
-* Order ID
-* Customer
-* Amount
-* Payment method
-* Payment status
-* Date
-* Refund status
-
----
-
-## 💰 Payouts & Financial Privacy
-
-Seller financial information is intentionally protected.
-
-Admin must not receive unnecessary seller-specific financial data such as:
-
-* Seller earnings
-* Seller revenue
-* Seller profit
-* Seller commission
-* Seller wallet balance
-* Seller payout amount
-* Seller financial ranking
-
-Instead, platform-level financial information can include:
-
-* Gross Sales
-* Discounts
-* Shipping Revenue
-* Tax Collected
-* Refunds
-* Cancelled Orders
-* Payment Fees
-* Platform Earnings
-* Net Estimated Earnings
-
----
-
-## 🎫 Support System
-
-The support system can manage customer tickets.
-
-Ticket information includes:
-
-* Open tickets
-* Pending tickets
-* Resolved tickets
-* Priority
-* Customer
-* Order ID
-* Issue
-* Messages
-* Attachments
-* Status
-* Created date
-* Resolved date
-
-Admin/support actions:
-
-* Reply
-* Assign
-* Close
-* Reopen
-
----
-
-## 📣 Marketing
-
-Marketing functionality includes:
-
-* Coupons
-* Discount codes
-* Flash sales
-* Offers
-* Homepage banners
-* Promotional banners
-* Featured products
-
----
-
-## 🔎 Smarter Search
-
-Future search improvements may include:
-
-* Typo tolerance
-* Semantic search
-* Synonyms
-* Personalized results
-* Better ranking
-* AI-assisted search
-
----
-
-## 💬 Real-Time Support
-
-A future support system could provide:
-
-* Customer support chat
-* Seller communication
-* Admin support
-* Real-time messages
-* Notifications
-
-Supabase Realtime can potentially be used for real-time communication.
-
----
-
-## 📍 Google Maps Integration
-
-The checkout experience may eventually include Google Maps functionality for:
-
-* Address autocomplete
-* Location selection
-* Reverse geocoding
-* More accurate delivery addresses
-
----
-
-## 🔔 Notification System
-
-A complete notification system can notify users about:
-
-### Customers
-
-* Order received
-* Order confirmed
-* Order shipped
-* Order delivered
-* Cancellation
-* Refund
-* Exchange
-* Promotions
-
-### Sellers
-
-* New order received
-* Product stock alerts
-* Order cancellation
-* Refund request
-* Exchange request
-
-### Admins
-
-* New seller registration
-* Platform events
-* Seller issues
-* Marketplace activity
-
----
-
-## 🗄️ Database & Architecture
-
-NOVA uses:
-
-```text
-Next.js
-   ↓
-Application Logic
-   ↓
-Supabase
-   ↓
-PostgreSQL
-```
-
-The application should use the existing database schema whenever possible.
-
-If an appropriate table already exists, it should be extended rather than creating a duplicate competing table.
-
----
-
-## 🔄 Return / Exchange Data Model
-
-Return/exchange records require information such as:
-
-```text
-request_id
-order_id
-order_item_id
-customer_id
-product_id
-seller_id
-request_type
-reason
-description
-evidence
-status
-requested_variant
-refund_amount
-refund_method
-requested_at
-approved_at
-pickup_date
-received_at
-completed_at
-rejected_at
-rejection_reason
-admin_notes
-```
-
-The exact implementation should follow the project's existing database naming conventions.
-
----
-
-## 💵 Financial Privacy
-
-Seller-specific financial information should never be unnecessarily exposed to administrators.
-
-Financial analytics remain platform-level where required.
-
----
-
-## 🔑 Environment Variables
-
-Sensitive configuration must be stored in environment variables.
-
-Example:
+The project requires the following environment variables (defined in `.env.local`). **Never commit real secrets to version control.**
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-STRIPE_SECRET_KEY=your_stripe_secret
-STRIPE_WEBHOOK_SECRET=your_webhook_secret
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Application Settings
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Payment Integration
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 ```
 
 ---
 
-## 🚀 Deployment
+## 🌍 Deployment
 
-### Vercel (Recommended)
+NOVA is optimized for deployment on **Vercel**:
 
-1. Connect your GitHub repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy
-
-```text
-GitHub
-   ↓
-Vercel
-   ↓
-Build
-   ↓
-Environment Variables
-   ↓
-Production Deployment
-```
-
-### Security
-
-Before deployment, make sure:
-
-* Environment variables are configured
-* Database URLs are correct
-* Authentication URLs are updated
-* Payment configuration is correct
-* Production database policies are enabled
-* No secrets are committed
-* Production build succeeds
+1. Push your code to a GitHub repository.
+2. Import the project into Vercel.
+3. Add the required Environment Variables in the Vercel dashboard.
+4. Deploy. Vercel will automatically detect the Next.js framework and configure the build settings.
 
 ---
 
-## 📝 License
+## 🔮 Future Improvements
 
-This project is licensed under the MIT License.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read the contributing guidelines before submitting PRs.
+While NOVA is fully functional, realistic roadmap improvements include:
+- **AI Semantic Search**: Enhancing the search bar to understand natural language queries.
+- **Stripe Connect Integration**: Automating direct payout splits between the platform and individual sellers.
+- **Google Maps Integration**: Implementing address auto-complete during checkout to reduce delivery errors.
+- **Real-Time Support Chat**: Integrating real-time customer-to-seller messaging via Supabase Realtime.
 
 ---
 
-## 📞 Support
+## 📸 Screenshots / Demo
 
-For questions or issues, please open a GitHub issue or contact the maintainers.
+*Add your live demo link and project screenshots here.*
+
+- **Live Demo**: [https://nova-ecommerce.vercel.app](#)
+- **GitHub Repository**: [https://github.com/yourusername/nova-ecommerce](#)
+
+*(Placeholder for Screenshots)*
+- *Desktop Home Page*
+- *Mobile Checkout Flow*
+- *Seller Dashboard Analytics*
+
+---
+
+## 👨‍💻 Credits / Author
+
+Designed and developed by **[Your Name/Organization]**.
+
+If you have any questions or would like to collaborate, feel free to open an issue or reach out!

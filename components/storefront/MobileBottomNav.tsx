@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Heart, ShoppingCart, User, Store } from 'lucide-react'
+import { Home, Heart, ShoppingCart, User, Store, ShoppingBag } from 'lucide-react'
 import { useStorefront } from '@/components/storefront/StorefrontProvider'
 
 export function MobileBottomNav() {
@@ -13,7 +13,7 @@ export function MobileBottomNav() {
 
   const navItems = [
     { label: 'Home', href: '/', icon: Home },
-    { label: 'Shop', href: '/products', icon: Store },
+    { label: 'Shop', href: '/products', icon: ShoppingBag },
     { label: 'Wishlist', href: '/wishlist', icon: Heart },
     { label: 'Cart', href: '/cart', icon: ShoppingCart, badge: cartCount },
     { label: 'Account', href: '/account', icon: User },

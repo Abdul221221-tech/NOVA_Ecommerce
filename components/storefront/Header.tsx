@@ -47,6 +47,9 @@ export function Header({
   const { cartItems, wishlistItems, clearUserLocalData } = useStorefront()
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const [showAllCategories, setShowAllCategories] = useState(false)
+  const [showAllBrands, setShowAllBrands] = useState(false)
+  const [brandSearch, setBrandSearch] = useState("")
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -143,7 +146,7 @@ export function Header({
                 <SheetHeader>
                   <SheetTitle className="font-heading text-2xl text-left text-accent-primary tracking-tight">NOVA</SheetTitle>
                 </SheetHeader>
-                <nav className="flex flex-col gap-2 mt-10">
+                <nav className="flex flex-col gap-2 mt-10 h-[calc(100vh-100px)] overflow-y-auto pb-24 custom-scrollbar">
                   {navLinks.map((link, i) => (
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
@@ -157,14 +160,70 @@ export function Header({
                     </motion.div>
                   ))}
                   
+                  {/* Categories Section */}
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="pt-6 mt-4 border-t">
                     <p className="px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Categories</p>
-                    <div className="flex flex-col gap-1">
-                      {categories.map(cat => (
-                        <Link key={cat.slug} href={`/categories/${cat.slug}`} className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors">
+                    <div className={`flex flex-col gap-1 ${showAllCategories ? 'max-h-[35vh] overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
+                      {(showAllCategories ? categories : categories.slice(0, 6)).map(cat => (
+                        <Link key={cat.slug} href={`/categories/${cat.slug}`} className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors" onClick={() => setIsMobileSearchOpen(false)}>
                           {cat.name}
                         </Link>
                       ))}
+                      {categories.length > 6 && (
+                        <button 
+                          onClick={() => setShowAllCategories(!showAllCategories)}
+                          className="text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-accent-primary hover:bg-accent-primary/10 transition-colors flex items-center gap-2"
+                        >
+                          {showAllCategories ? 'Show Less' : `View All (${categories.length})`}
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+
+                  {/* Brands Section */}
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }} className="pt-6 mt-4 border-t">
+                    <p className="px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Brands</p>
+                    
+                    <AnimatePresence>
+                      {showAllBrands && (
+                        <motion.div 
+                          initial={{ height: 0, opacity: 0 }} 
+                          animate={{ height: 'auto', opacity: 1 }} 
+                          exit={{ height: 0, opacity: 0 }}
+                          className="px-4 mb-3 overflow-hidden"
+                        >
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <input 
+                              type="text" 
+                              placeholder="Search brands..." 
+                              value={brandSearch}
+                              onChange={(e) => setBrandSearch(e.target.value)}
+                              className="w-full pl-9 pr-4 py-2 bg-muted/50 border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-primary/50 transition-all"
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div className={`flex flex-col gap-1 ${showAllBrands ? 'max-h-[35vh] overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
+                      {(showAllBrands ? brands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase())) : brands.slice(0, 6)).map(brand => (
+                        <Link key={brand} href={`/products?brand=${encodeURIComponent(brand)}`} className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors" onClick={() => setIsMobileSearchOpen(false)}>
+                          {brand}
+                        </Link>
+                      ))}
+                      
+                      {brands.length > 6 && (
+                        <button 
+                          onClick={() => {
+                            if (showAllBrands) setBrandSearch('');
+                            setShowAllBrands(!showAllBrands);
+                          }}
+                          className="text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-accent-primary hover:bg-accent-primary/10 transition-colors flex items-center gap-2 mt-1"
+                        >
+                          {showAllBrands ? 'Show Less' : `View All (${brands.length})`}
+                        </button>
+                      )}
                     </div>
                   </motion.div>
 
@@ -375,7 +434,7 @@ export function Header({
           <TooltipProvider delay={0}>
             <Tooltip>
               <TooltipTrigger>
-                <Link href={sellerCentreLink} className="hidden sm:inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
+                <Link href={sellerCentreLink} className="inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
                   <Store className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
                 </Link>
               </TooltipTrigger>
@@ -386,7 +445,7 @@ export function Header({
 
             <Tooltip>
               <TooltipTrigger>
-                <Link href="/wishlist" className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex">
+                <Link href="/wishlist" className="hidden md:inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
                   <Heart className={`w-5 h-5 transition-colors duration-300 ${wishlistItems?.length > 0 ? 'fill-indigo-600 text-indigo-600' : 'text-foreground group-hover:text-indigo-600'}`} />
                   {wishlistItems?.length > 0 && (
                     <motion.span 
@@ -412,7 +471,7 @@ export function Header({
             />
           )}
 
-          <div className="relative">
+          <div className="relative hidden md:block">
             <button 
               onClick={() => setIsCartOpen(!isCartOpen)}
               className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
