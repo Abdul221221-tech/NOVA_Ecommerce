@@ -129,7 +129,7 @@ export function Header({
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={`sticky top-0 z-50 w-full transition-all duration-500 flex justify-center ${isScrolled ? 'pt-2 pb-2' : 'pt-0 pb-0'}`}
     >
-      <div className={`w-full max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-white/20 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-6 md:px-8 mx-4' : 'border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
+      <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-white/20 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
         <div className="flex items-center gap-4 md:gap-8 justify-between h-full">
           
           {/* Left: Mobile Menu & Logo */}
