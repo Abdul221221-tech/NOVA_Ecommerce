@@ -473,7 +473,13 @@ export function Header({
 
           <div className="relative hidden md:block">
             <button 
-              onClick={() => setIsCartOpen(!isCartOpen)}
+              onClick={() => {
+                if (!user) {
+                  router.push('/signup?redirect=/cart')
+                } else {
+                  setIsCartOpen(!isCartOpen)
+                }
+              }}
               className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
               aria-label="View Cart"
             >

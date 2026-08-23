@@ -8,6 +8,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ShoppingBag, ArrowLeft } from 'lucide-react'
 import { useStorefront } from '@/components/storefront/StorefrontProvider'
+import { addToCart } from '@/app/actions/cart'
+import { useRouter, usePathname } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -18,6 +21,8 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
   const imageRef = useRef<HTMLDivElement>(null)
   const [reduceMotion, setReduceMotion] = useState(false)
   const { refreshCart } = useStorefront() // Trigger global cart update
+  const router = useRouter()
+  const pathname = usePathname()
   const [added, setAdded] = useState(false)
 
   useEffect(() => {
@@ -73,17 +78,27 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
   }, { scope: container, dependencies: [reduceMotion] })
 
   const handleSkipToBuy = async () => {
-    // Optimistic add-to-cart for demo purposes
-    // In reality, this would hit the `addToCart` server action
     try {
       setAdded(true)
-      // Attempt to hit the add API or just refresh cart if we had a dedicated action
-      setTimeout(() => {
-        refreshCart()
+      const variantId = product.variants?.[0]?.id
+      if (!variantId) {
+        toast.error("Product variant not found")
         setAdded(false)
-      }, 1000)
-    } catch (e) {
-      console.error(e)
+        return
+      }
+      await addToCart(variantId, 1)
+      refreshCart()
+      toast.success("Added to cart!")
+      setTimeout(() => setAdded(false), 2000)
+    } catch (e: any) {
+      setAdded(false)
+      if (e.message === "AUTH_REQUIRED") {
+        toast.error("Please log in or sign up to continue.")
+        router.push(`/signup?redirect=${encodeURIComponent(pathname)}`)
+      } else {
+        console.error(e)
+        toast.error(e.message || "Failed to add to cart")
+      }
     }
   }
 
