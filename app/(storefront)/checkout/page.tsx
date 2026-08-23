@@ -12,7 +12,7 @@ export default async function CartPage() {
   const cookieStore = await cookies()
   
   if (!user) {
-    redirect('/login?redirect=/checkout')
+    redirect('/signup?redirect=/checkout')
   }
 
   let cartId: string | null = null

@@ -51,7 +51,7 @@ export default function CartPage() {
     
     if (!user) {
       toast.error('Please log in or sign up to continue to checkout')
-      router.push('/login?redirect=/checkout')
+      router.push('/signup?redirect=/checkout')
     } else {
       router.push('/checkout')
     }

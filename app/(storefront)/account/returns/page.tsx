@@ -16,7 +16,7 @@ export default async function CustomerReturnsPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/account/returns')
+    redirect('/signup?redirect=/account/returns')
   }
 
   // Fetch Returns

@@ -9,7 +9,7 @@ export default async function OrderSuccessPage({ params }: { params: Promise<{ i
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    redirect('/signup')
   }
 
   // Fetch order details

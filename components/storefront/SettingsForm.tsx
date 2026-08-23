@@ -94,7 +94,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
         
         {/* Sidebar Nav */}
         <div className="w-full md:w-64 shrink-0">
-          <TabsList className="flex md:flex-col h-auto bg-transparent p-0 gap-2 overflow-x-auto w-full justify-start items-start">
+          <TabsList className="flex md:flex-col !h-auto min-h-fit bg-transparent p-0 gap-2 overflow-x-auto md:overflow-visible w-full justify-start items-start">
             <TabsTrigger 
               value="account" 
               className="w-full justify-start gap-3 py-3 px-4 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm data-[state=active]:text-indigo-600 dark:data-[state=active]:text-indigo-400 text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800/50"
@@ -131,7 +131,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
         {/* Content Area */}
         <div className="flex-1">
           <TabsContent value="account" className="mt-0 outline-none">
-            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl overflow-hidden">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl">
               <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 pb-6 px-8 pt-8">
                 <CardTitle className="text-2xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                   <User className="w-6 h-6 text-indigo-500" /> Account Settings
@@ -157,7 +157,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
           </TabsContent>
 
           <TabsContent value="notifications" className="mt-0 outline-none">
-            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl overflow-hidden">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl">
               <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 pb-6 px-8 pt-8">
                 <CardTitle className="text-2xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                   <Bell className="w-6 h-6 text-pink-500" /> Notifications
@@ -207,7 +207,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
           </TabsContent>
 
           <TabsContent value="privacy" className="mt-0 outline-none">
-            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl overflow-hidden">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl">
               <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 pb-6 px-8 pt-8">
                 <CardTitle className="text-2xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                   <Lock className="w-6 h-6 text-purple-500" /> Security
@@ -300,7 +300,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
           </TabsContent>
 
           <TabsContent value="appearance" className="mt-0 outline-none">
-            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl overflow-hidden">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl">
               <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 pb-6 px-8 pt-8">
                 <CardTitle className="text-2xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                   <Palette className="w-6 h-6 text-fuchsia-500" /> Appearance
@@ -336,7 +336,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
           </TabsContent>
 
           <TabsContent value="language" className="mt-0 outline-none">
-            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl overflow-hidden">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-lg rounded-3xl">
               <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 pb-6 px-8 pt-8">
                 <CardTitle className="text-2xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                   <Globe className="w-6 h-6 text-blue-500" /> Language & Region

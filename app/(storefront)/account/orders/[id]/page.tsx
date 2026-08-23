@@ -16,7 +16,7 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/account')
+    redirect('/signup?redirect=/account')
   }
 
   const { data: order, error } = await supabase

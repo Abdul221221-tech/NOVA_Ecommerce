@@ -32,7 +32,7 @@ export function WishlistButton({ productId, variant = 'default' }: { productId: 
       toggleWishlistLocal(productId) // revert
       if (err.message === "AUTH_REQUIRED") {
         toast.error("Please log in or sign up to continue.")
-        router.push(`/login?redirect=${encodeURIComponent(pathname + '?action=add_to_wishlist&product_id=' + productId)}`)
+        router.push(`/signup?redirect=${encodeURIComponent(pathname + '?action=add_to_wishlist&product_id=' + productId)}`)
       } else {
         toast.error('Failed to update wishlist')
       }

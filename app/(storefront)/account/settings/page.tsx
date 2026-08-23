@@ -8,14 +8,14 @@ export default async function SettingsPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/account/settings')
+    redirect('/signup?redirect=/account/settings')
   }
 
   // Fetch the user's settings from metadata
   const settings = user.user_metadata?.settings || {}
 
   return (
-    <div className="relative min-h-[calc(100vh-200px)] overflow-hidden">
+    <div className="relative min-h-[calc(100vh-200px)] overflow-x-hidden">
       <ProfileBackground />
 
       <div className="w-full">

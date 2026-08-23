@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/account')
+    redirect('/signup?redirect=/account')
   }
 
   // Fetch the user's profile data

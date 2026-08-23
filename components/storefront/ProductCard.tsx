@@ -129,7 +129,7 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
     } catch (err: any) {
       if (err.message === "AUTH_REQUIRED") {
         toast.error("Please log in or sign up to continue.")
-        router.push(`/login?redirect=${encodeURIComponent(pathname + '?action=add_to_cart&variant_id=' + variants[0].id)}`)
+        router.push(`/signup?redirect=${encodeURIComponent(pathname + '?action=add_to_cart&variant_id=' + variants[0].id)}`)
       } else {
         toast.error(err.message || 'Failed to add to cart')
       }

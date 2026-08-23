@@ -8,11 +8,11 @@ export default async function AccountLayout({ children }: { children: React.Reac
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login?next=/account')
+    redirect('/signup?redirect=/account')
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-200px)] overflow-hidden">
+    <div className="relative min-h-[calc(100vh-200px)] overflow-x-hidden">
       <ProfileBackground />
       <div className="container mx-auto max-w-7xl px-4 py-8 md:py-12 relative z-10">
       <div className="flex flex-col md:flex-row gap-8 lg:gap-12">

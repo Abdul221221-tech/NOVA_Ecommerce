@@ -9,7 +9,7 @@ export default async function CustomerOrdersPage() {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    redirect('/login')
+    redirect('/signup')
   }
 
   const { data: orders } = await supabase

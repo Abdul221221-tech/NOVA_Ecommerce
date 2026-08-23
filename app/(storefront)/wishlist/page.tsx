@@ -12,7 +12,7 @@ export default async function WishlistPage() {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    redirect('/login?callbackUrl=/wishlist')
+    redirect('/signup?redirect=/wishlist')
   }
 
   const products = await getWishlistProducts()

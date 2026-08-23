@@ -87,7 +87,7 @@ export default function VariantSelector({ variants, sizes, colors, basePrice }: 
       console.error(err)
       if (err.message === "AUTH_REQUIRED") {
         toast.error("Please log in or sign up to continue.")
-        router.push(`/login?redirect=${encodeURIComponent(pathname + '?action=add_to_cart&variant_id=' + matchedVariant.id)}`)
+        router.push(`/signup?redirect=${encodeURIComponent(pathname + '?action=add_to_cart&variant_id=' + matchedVariant.id)}`)
       } else {
         toast.error("Failed to add to cart")
       }
