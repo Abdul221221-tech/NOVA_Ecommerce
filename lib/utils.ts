@@ -5,10 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function calculateAge(dob: string | Date | null | undefined): number | null {
-  if (!dob) return null;
+export function calculateAge(dob: string | Date | null | undefined): number | "" {
+  if (!dob) return "";
   const birthDate = new Date(dob);
-  if (isNaN(birthDate.getTime())) return null;
+  if (isNaN(birthDate.getTime())) return "";
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
