@@ -63,7 +63,7 @@ export default function ShippingPage() {
             Delivery time depends on the seller's location, your delivery address, product availability, and the shipping method selected.
           </p>
           
-          <div className="overflow-x-auto mb-6 overflow-x-auto">
+          <div className="overflow-x-auto mb-6">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800">

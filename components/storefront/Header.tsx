@@ -340,7 +340,7 @@ export function Header({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.98, transition: { duration: 0.15 } }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute top-full mt-4 left-0 w-[460px] bg-background backdrop-blur-2xl border border-foreground/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] rounded-[1.5rem] overflow-hidden flex flex-col z-50 origin-top-left"
+                    className="absolute top-full mt-4 left-0 w-[calc(100vw-2rem)] sm:w-[460px] bg-background backdrop-blur-2xl border border-foreground/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] rounded-[1.5rem] overflow-hidden flex flex-col z-50 origin-top-left"
                     onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
                   >
                     <div className="p-5 px-6 bg-gradient-to-b from-white/5 to-transparent border-b border-foreground/10 flex flex-col gap-3">

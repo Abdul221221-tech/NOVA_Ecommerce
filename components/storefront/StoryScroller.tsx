@@ -105,7 +105,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
   // Fallback layout for reduced motion
   if (reduceMotion) {
     return (
-      <div className="bg-background min-h-screen pb-32">
+      <div className="bg-background min-h-[100dvh] pb-32">
         <div className="container mx-auto px-4 max-w-4xl py-12 space-y-12">
            <Link href={`/products/${product.id}`} className="inline-flex items-center text-sm font-medium hover:text-accent-primary">
               <ArrowLeft className="w-4 h-4 mr-2" /> Back to Product
@@ -152,7 +152,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
 
       <div className="flex flex-col md:flex-row">
         {/* Left Side: Pinned Image */}
-        <div className="w-full md:w-1/2 h-screen relative hidden md:block">
+        <div className="w-full md:w-1/2 h-[100dvh] relative hidden md:block">
           <div ref={imageRef} className="absolute inset-0 w-full h-full flex items-center justify-center p-12">
             <div className="relative w-full h-[80vh] rounded-3xl overflow-hidden shadow-2xl border bg-muted/20">
                <Image src={primaryImage} alt={product.title} fill className="object-cover" priority />
@@ -169,7 +169,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
         {/* Right Side: Scrolling Narrative */}
         <div className="w-full md:w-1/2 relative z-10">
           
-          <div className="story-panel h-screen flex flex-col justify-center px-8 md:px-16 md:-mt-24">
+          <div className="story-panel h-[100dvh] flex flex-col justify-center px-8 md:px-16 md:-mt-24">
             <p className="text-accent-primary font-bold tracking-widest uppercase text-sm mb-4">Discover</p>
             <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-6">
               {product.title}
@@ -179,7 +179,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
             </p>
           </div>
 
-          <div className="story-panel h-screen flex flex-col justify-center px-8 md:px-16">
+          <div className="story-panel h-[100dvh] flex flex-col justify-center px-8 md:px-16">
             <h2 className="font-heading text-4xl font-bold mb-6">The Craft</h2>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
               {product.description}
@@ -191,7 +191,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
             )}
           </div>
 
-          <div className="story-panel h-screen flex flex-col justify-center px-8 md:px-16">
+          <div className="story-panel h-[100dvh] flex flex-col justify-center px-8 md:px-16">
             <h2 className="font-heading text-4xl font-bold mb-6">Make It Yours</h2>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-lg mb-12">
               Ready to elevate your collection? Purchase this premium piece directly from {product.stores?.name || 'the seller'}.

@@ -164,7 +164,7 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
       >
         <div className="h-full flex flex-col overflow-hidden border border-border/50 bg-card transition-shadow duration-300 hover:shadow-xl rounded-2xl">
           {/* Image Area */}
-          <Link href={`/products/${product.id}`} className="relative aspect-[4/3] w-full bg-muted/50 overflow-hidden block group">
+          <Link href={`/products/${product.id}`} className="relative aspect-[4/3] sm:aspect-square w-full bg-muted/50 overflow-hidden block group">
             
             {/* Product Images */}
             {images.length > 0 ? (
@@ -199,7 +199,7 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                 </div>
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground/50">
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground/50 text-xs sm:text-sm">
                 No image
               </div>
             )}
@@ -208,24 +208,24 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
             <div className="absolute inset-0 bg-black/10 dark:bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10" />
 
             {/* Smart Badges (Bottom Left) */}
-            <div className="absolute bottom-3 left-3 flex flex-col gap-1.5 z-20 items-start pointer-events-none">
+            <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 flex flex-col gap-1.5 z-20 items-start pointer-events-none">
               {isOutOfStock ? (
-                <Badge className="bg-slate-900/80 dark:bg-slate-100/80 text-white dark:text-slate-900 backdrop-blur-md border-none font-bold tracking-wide">Out of Stock</Badge>
+                <Badge className="bg-slate-900/80 dark:bg-slate-100/80 text-white dark:text-slate-900 backdrop-blur-md border-none font-bold tracking-wide text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">Out of Stock</Badge>
               ) : isLowStock ? (
-                <Badge className="bg-orange-500/90 text-white backdrop-blur-md border-none font-bold tracking-wide">Low Stock</Badge>
+                <Badge className="bg-orange-500/90 text-white backdrop-blur-md border-none font-bold tracking-wide text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">Low Stock</Badge>
               ) : null}
               {discountPercent > 0 && !isOutOfStock && (
-                <Badge className="bg-emerald-500/90 text-white backdrop-blur-md border-none font-bold tracking-wide">
+                <Badge className="bg-emerald-500/90 text-white backdrop-blur-md border-none font-bold tracking-wide text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">
                   {discountPercent}% OFF
                 </Badge>
               )}
               {isNew && !isOutOfStock && !promoBadge && (
-                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
+                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">
                   NEW
                 </Badge>
               )}
               {promoBadge && (
-                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
+                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">
                   {promoBadge}
                 </Badge>
               )}
@@ -233,25 +233,25 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
 
             {/* Top-Right: Wishlist */}
             {mounted && (
-              <div className="absolute top-3 right-3 z-30 opacity-0 -translate-y-2 lg:opacity-0 lg:-translate-y-2 max-lg:opacity-100 max-lg:translate-y-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-30 opacity-0 -translate-y-2 lg:opacity-0 lg:-translate-y-2 max-lg:opacity-100 max-lg:translate-y-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                 <WishlistButton variant="card" productId={product.id} />
               </div>
             )}
 
             {/* Top-Left: Compare */}
             {mounted && (
-              <div className="absolute top-3 left-3 z-30 opacity-0 -translate-y-2 lg:opacity-0 lg:-translate-y-2 max-lg:opacity-100 max-lg:translate-y-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+              <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-30 opacity-0 -translate-y-2 lg:opacity-0 lg:-translate-y-2 max-lg:opacity-100 max-lg:translate-y-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                 <button 
                   onClick={handleCompare}
                   aria-label="Compare Product"
                   title={isCompared ? "In Comparison" : "Add to Compare"}
-                  className={`flex items-center justify-center w-[32px] h-[32px] rounded-full shadow-sm backdrop-blur-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
+                  className={`flex items-center justify-center w-7 h-7 sm:w-[32px] sm:h-[32px] rounded-full shadow-sm backdrop-blur-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
                     isCompared 
                       ? 'bg-accent-primary text-background scale-105' 
                       : 'bg-background/90 text-muted-foreground hover:bg-white dark:hover:bg-muted-foreground hover:text-foreground hover:scale-110'
                   }`}
                 >
-                  <ArrowRightLeft className="w-[16px] h-[16px]" strokeWidth={2.5} />
+                  <ArrowRightLeft className="w-3.5 h-3.5 sm:w-[16px] sm:h-[16px]" strokeWidth={2.5} />
                 </button>
               </div>
             )}
@@ -260,60 +260,60 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 hidden md:flex">
                <button
                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuickViewOpen(true) }}
-                 className="flex items-center gap-2 bg-background/95 text-foreground px-5 py-2.5 rounded-full font-semibold shadow-lg hover:bg-white dark:hover:bg-muted-foreground hover:scale-105 transition-all"
+                 className="flex items-center gap-2 bg-background/95 text-foreground px-4 py-2 sm:px-5 sm:py-2.5 rounded-full font-semibold shadow-lg hover:bg-white dark:hover:bg-muted-foreground hover:scale-105 transition-all text-xs sm:text-sm"
                >
-                 <Eye className="w-4 h-4" />
+                 <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                  <span>Quick View</span>
                </button>
             </div>
           </Link>
           
           {/* Content Area */}
-          <div className="p-4 flex flex-col flex-1">
+          <div className="p-3 sm:p-4 flex flex-col flex-1">
             <Link href={`/products/${product.id}`} className="flex flex-col flex-1 group/text">
               {product.brand && (
-                <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-1.5 opacity-80">
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-1 sm:mb-1.5 opacity-80">
                   {product.brand}
                 </span>
               )}
               
-              <h3 className="font-heading text-base font-bold text-foreground leading-snug line-clamp-2 min-h-[2.5rem] mb-1.5 group-hover/text:text-accent-primary transition-colors">
+              <h3 className="font-heading text-sm sm:text-base font-bold text-foreground leading-tight sm:leading-snug line-clamp-2 min-h-[2.5rem] mb-1 sm:mb-1.5 group-hover/text:text-accent-primary transition-colors">
                 {product.title}
               </h3>
               
               {product.description && (
-                <p className="text-[13px] text-muted-foreground line-clamp-2 mb-2.5 leading-relaxed flex-1">
+                <p className="hidden sm:-webkit-box text-[13px] text-muted-foreground line-clamp-2 mb-2.5 leading-relaxed flex-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                   {product.description}
                 </p>
               )}
               
               {/* Rating */}
-              <div className="flex items-center gap-1.5 mb-auto">
+              <div className="flex items-center gap-1 sm:gap-1.5 mb-auto mt-1 sm:mt-0">
                 {reviewsCount > 0 ? (
                   <>
                     <div className="flex text-amber-400">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(avgRating) ? 'fill-current' : 'text-slate-200 dark:text-slate-800 stroke-current'}`} />
+                         <Star key={i} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.round(avgRating) ? 'fill-current' : 'text-slate-200 dark:text-slate-800 stroke-current'}`} />
                       ))}
                     </div>
-                    <span className="text-xs text-muted-foreground font-medium">({reviewsCount})</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">({reviewsCount})</span>
                   </>
                 ) : (
-                  <span className="text-xs text-muted-foreground/50">No reviews yet</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground/50">No reviews</span>
                 )}
               </div>
             </Link>
 
             {/* Divider */}
-            <div className="h-px w-full bg-slate-100 dark:bg-slate-800 my-4" />
+            <div className="h-px w-full bg-slate-100 dark:bg-slate-800 my-2.5 sm:my-4" />
 
             {/* Footer / Add to Cart */}
             <div className="flex items-center justify-between mt-auto">
               <div className="flex flex-col">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[19px] font-bold tracking-tight">₹{product.price.toLocaleString('en-IN')}</span>
+                <div className="flex items-baseline gap-1.5 sm:gap-2">
+                  <span className="text-base sm:text-[19px] font-bold tracking-tight">₹{product.price.toLocaleString('en-IN')}</span>
                   {product.compare_at_price && product.compare_at_price > product.price && (
-                    <span className="text-sm text-muted-foreground line-through opacity-70 hidden sm:inline-block">
+                    <span className="text-xs sm:text-sm text-muted-foreground line-through opacity-70 hidden min-[360px]:inline-block">
                       ₹{product.compare_at_price.toLocaleString('en-IN')}
                     </span>
                   )}
@@ -325,7 +325,7 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                 onClick={handleAddToCart}
                 disabled={isAdding || isAdded || isOutOfStock}
                 aria-label="Add to Cart"
-                className={`relative overflow-hidden flex items-center justify-center w-10 h-10 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary shadow-sm ${
+                className={`relative overflow-hidden flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary shadow-sm shrink-0 ml-2 ${
                   isOutOfStock ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' :
                   isAdded ? 'bg-emerald-500 text-white' :
                   isAdding ? 'bg-accent-primary/80 text-background' :
@@ -335,15 +335,15 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                 <AnimatePresence mode="wait">
                   {isAdding ? (
                     <motion.div key="loading" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
                     </motion.div>
                   ) : isAdded ? (
                     <motion.div key="added" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                      <Check className="w-4 h-4" />
+                      <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </motion.div>
                   ) : (
                     <motion.div key="idle" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                      <ShoppingCart className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                      <ShoppingCart className="w-4 h-4 sm:w-[18px] sm:h-[18px]" strokeWidth={2.5} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -356,3 +356,4 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
     </>
   )
 }
+

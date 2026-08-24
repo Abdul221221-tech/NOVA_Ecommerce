@@ -40,7 +40,7 @@ export function AIChatWidget({ isOpen, onClose }: AIChatWidgetProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-[100px] right-6 z-50 w-[90vw] max-w-[400px] sm:w-[400px] h-[600px] max-h-[75vh] bg-white dark:bg-zinc-950 border border-border/60 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+          className="fixed bottom-[100px] right-6 z-50 w-[90vw] max-w-[400px] sm:w-[400px] h-[calc(100dvh-120px)] sm:h-[600px] max-h-[85dvh] bg-white dark:bg-zinc-950 border border-border/60 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 bg-accent-primary/10 border-b border-accent-primary/20">

@@ -559,8 +559,8 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
                           const actualRate = typeof item.gst_rate === 'number' ? item.gst_rate : 18;
                           const itemGst = (itemTotal * actualRate) / 100;
                           return (
-                            <div key={`${sIdx}-${iIdx}`} className="flex justify-between text-xs text-muted-foreground">
-                              <span className="truncate max-w-[200px]" title={item.title}>
+                            <div key={`${sIdx}-${iIdx}`} className="flex justify-between text-xs text-muted-foreground gap-4">
+                              <span className="truncate flex-1 min-w-0" title={item.title}>
                                 {item.title} ({actualRate}%)
                               </span>
                               <span>₹{itemGst.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
