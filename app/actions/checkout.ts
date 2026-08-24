@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { stripe } from '@/lib/stripe'
 
 // Hardcoded coupons for conceptual flow
 const VALID_COUPONS: Record<string, { type: 'percentage' | 'fixed', value: number, minOrder: number }> = {
@@ -29,12 +30,7 @@ export async function validateCouponAction(code: string, subtotal: number) {
   return { success: true, discountAmount, code: code.toUpperCase() }
 }
 
-function getGSTRate(title: string) {
-  const lowerTitle = title.toLowerCase()
-  if (lowerTitle.includes('shirt') || lowerTitle.includes('shoe') || lowerTitle.includes('apparel')) return 12 // 12% GST
-  if (lowerTitle.includes('laptop') || lowerTitle.includes('phone') || lowerTitle.includes('electronics')) return 18 // 18% GST
-  return 18 // Default 18%
-}
+
 
 export async function placeOrder(shippingAddress: any, couponCode: string | null, paymentMethod: string) {
   const supabase = await createClient()
@@ -63,82 +59,95 @@ export async function placeOrder(shippingAddress: any, couponCode: string | null
     return { success: false, error: "No active cart found" }
   }
 
-  // 2. Get cart items with product details
-  const { data: cartItems } = await supabase
+  let cartItemsQuery = supabase
     .from('cart_items')
     .select(`
       id, quantity, product_variant_id,
       product_variants (
         id, price_override,
         products (
-          id, title, price, store_id
+          id, title, price, store_id, gst_rate
         )
       )
     `)
     .eq('cart_id', cart.id)
+    
+  let { data: cartItems, error: itemsError } = await cartItemsQuery
+
+  if (itemsError && itemsError.code === '42703') {
+    const { data: fallbackItems } = await supabase
+      .from('cart_items')
+      .select(`
+        id, quantity, product_variant_id,
+        product_variants (
+          id, price_override,
+          products (
+            id, title, price, store_id
+          )
+        )
+      `)
+      .eq('cart_id', cart.id)
+    cartItems = fallbackItems
+  }
 
   if (!cartItems || cartItems.length === 0) {
     return { success: false, error: "Your cart is empty" }
   }
 
-  // 3. Group items by store
-  const itemsByStore: Record<string, any[]> = {}
+// 3. Group items by store for calculation
+  const inputItemsByStore: Record<string, { storeName: string, items: any[] }> = {}
   cartItems.forEach(item => {
     const variant = Array.isArray(item.product_variants) ? item.product_variants[0] : item.product_variants
     const product = Array.isArray(variant.products) ? variant.products[0] : variant.products
     
     const storeId = product.store_id
-    if (!itemsByStore[storeId]) {
-      itemsByStore[storeId] = []
+    if (!inputItemsByStore[storeId]) {
+      inputItemsByStore[storeId] = { storeName: storeId, items: [] }
     }
-    itemsByStore[storeId].push({
-      ...item,
-      variant,
-      product
+    inputItemsByStore[storeId].items.push({
+      price: variant.price_override ?? product.price,
+      quantity: item.quantity,
+      gst_rate: product.gst_rate,
+      title: product.title,
+      product_variant_id: item.product_variant_id
     })
   })
 
   // 4. Generate shared order group ID
   const orderGroupId = crypto.randomUUID ? crypto.randomUUID() : 'ord_' + Date.now() + Math.random().toString(36).substring(2, 9)
 
-  // 5. Create orders and order items
-  for (const [storeId, items] of Object.entries(itemsByStore)) {
-    let storeSubtotal = 0
-    let storeGstTotal = 0
-    
-    items.forEach(item => {
-      const price = item.variant.price_override ?? item.product.price
-      const itemTotal = price * item.quantity
-      storeSubtotal += itemTotal
-      
-      const gstRate = getGSTRate(item.product.title)
-      storeGstTotal += (itemTotal * gstRate) / 100
-    })
-
-    // Calculate Store-level discount (pro-rated if multiple stores, but for simplicity applying coupon logic globally or per store)
-    let storeDiscount = 0
-    if (couponCode) {
-      const valid = await validateCouponAction(couponCode, storeSubtotal)
-      if (valid.success && valid.discountAmount) {
-        storeDiscount = valid.discountAmount
-      }
+  // Calculate global subtotal first for accurate coupon validation
+  let rawGlobalSubtotal = 0;
+  for (const store of Object.values(inputItemsByStore)) {
+    for (const item of store.items) {
+      rawGlobalSubtotal += item.price * item.quantity
     }
+  }
 
-    const storeShipping = storeSubtotal > 500 ? 0 : 40
-    
-    // Final Calculation: Subtotal + Shipping + GST - Discount
-    const storeTotal = storeSubtotal + storeShipping + storeGstTotal - storeDiscount
-    
-    const platformFee = storeSubtotal * 0.05 // 5% fee
-    const sellerPayout = storeTotal - platformFee
+  // Validate coupon globally
+  let globalDiscountAmount = 0;
+  if (couponCode) {
+    const valid = await validateCouponAction(couponCode, rawGlobalSubtotal)
+    if (valid.success && valid.discountAmount) {
+      globalDiscountAmount = valid.discountAmount
+    }
+  }
+
+  // Calculate pricing through centralized engine
+  const pricingConfig = (await import('@/lib/pricing')).calculateGlobalTotals(inputItemsByStore, globalDiscountAmount)
+
+  // 5. Create orders and order items
+  for (const storeTotals of pricingConfig.storeTotals) {
+    const storeId = storeTotals.storeId;
+    const items = inputItemsByStore[storeId].items;
 
     // Embed metadata into JSONB
     const fullShippingMetadata = {
       ...shippingAddress,
       paymentMethod,
-      gst: storeGstTotal,
-      discount: storeDiscount,
-      shipping: storeShipping
+      gst: storeTotals.gst,
+      discount: storeTotals.discount,
+      shipping: storeTotals.shipping
     }
 
     // Insert order bypassing RLS
@@ -149,11 +158,11 @@ export async function placeOrder(shippingAddress: any, couponCode: string | null
         customer_id: user.id,
         store_id: storeId,
         status: 'pending',
-        subtotal: storeSubtotal,
-        shipping: storeShipping,
-        platform_fee: platformFee,
-        seller_payout: sellerPayout,
-        total: storeTotal,
+        subtotal: storeTotals.merchandiseSubtotal,
+        shipping: storeTotals.shipping,
+        platform_fee: storeTotals.platformFee,
+        seller_payout: storeTotals.sellerPayout,
+        total: storeTotals.total,
         shipping_address: fullShippingMetadata,
         stripe_payment_intent_id: paymentMethod === 'COD' ? 'COD' : `mock_pi_${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9)}`
       })
@@ -171,21 +180,34 @@ export async function placeOrder(shippingAddress: any, couponCode: string | null
     })
 
     // Insert order items
-    const orderItemsToInsert = items.map(item => {
-      const price = item.variant.price_override ?? item.product.price
-      return {
-        order_id: order.id,
-        product_variant_id: item.product_variant_id,
-        quantity: item.quantity,
-        price_at_purchase: price
-      }
-    })
+    const orderItemsToInsert = items.map(item => ({
+      order_id: order.id,
+      product_variant_id: item.product_variant_id,
+      quantity: item.quantity,
+      price_at_purchase: item.price
+    }))
 
     const { error: itemsError } = await adminClient
       .from('order_items')
       .insert(orderItemsToInsert)
 
     if (itemsError) return { success: false, error: "Failed to create order items: " + itemsError.message }
+  }
+
+  let clientSecret = null;
+  if (paymentMethod !== 'COD') {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(pricingConfig.globalTotal * 100),
+      currency: 'inr',
+      metadata: {
+        orderGroupId: orderGroupId,
+        customerId: user.id
+      }
+    });
+    clientSecret = paymentIntent.client_secret;
+
+    // Update orders with real payment intent ID
+    await adminClient.from('orders').update({ stripe_payment_intent_id: paymentIntent.id }).eq('order_group_id', orderGroupId);
   }
 
   // 6. Clear cart
@@ -196,18 +218,38 @@ export async function placeOrder(shippingAddress: any, couponCode: string | null
 
   if (clearError) return { success: false, error: "Failed to clear cart: " + clearError.message }
 
-  // 7. Send notification
+  // 7. Send notification to Customer
   try {
     const { createNotification } = await import('@/app/actions/notifications')
     await createNotification(user.id, {
-      title: 'Order Confirmed',
-      message: `Your order has been placed successfully! We'll notify you when it ships.`,
+      title: 'Order Placed Successfully',
+      message: `Your order #${orderGroupId.split('-')[0]} has been confirmed! We'll notify you when it ships.`,
       type: 'order',
-      related_id: orderGroupId
+      related_id: orderGroupId,
+      icon: 'Package'
     })
+
+    // Send notifications to Sellers
+    for (const storeTotals of pricingConfig.storeTotals) {
+      const storeId = storeTotals.storeId;
+      const { data: store } = await adminClient.from('stores').select('owner_id').eq('id', storeId).single()
+      if (store?.owner_id) {
+        // Find the specific order for this store to link to it directly
+        const { data: order } = await adminClient.from('orders').select('id').eq('order_group_id', orderGroupId).eq('store_id', storeId).single()
+        
+        await createNotification(store.owner_id, {
+          title: 'New Order Received!',
+          message: `You have received a new order. Please review and process it.`,
+          type: 'order',
+          related_id: order?.id || orderGroupId,
+          icon: 'Package',
+          href: order?.id ? `/seller/orders/${order.id}` : '/seller/orders'
+        })
+      }
+    }
   } catch (err) {
-    console.error('Failed to send order notification', err)
+    console.error('Failed to send order notifications', err)
   }
 
-  return { success: true, orderGroupId }
+  return { success: true, orderGroupId, clientSecret }
 }

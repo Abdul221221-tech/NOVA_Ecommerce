@@ -117,7 +117,7 @@ export function CartDropdown({ isOpen, onClose }: { isOpen: boolean, onClose: ()
                 <span>₹{subtotal.toLocaleString('en-IN')}</span>
               </div>
                 <div className="flex flex-col gap-2">
-                <Link href="/checkout" onClick={onClose} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full bg-accent-primary hover:bg-accent-primary/90 text-white shadow-md h-10 px-4 py-2">
+                <Link href="/checkout" onClick={onClose} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full bg-accent-primary hover:bg-accent-primary/90 text-background shadow-md h-10 px-4 py-2">
                   Continue to Checkout
                 </Link>
                 <Link href="/cart" onClick={onClose} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input w-full border-border/50 bg-background hover:bg-muted hover:text-accent-foreground h-10 px-4 py-2">

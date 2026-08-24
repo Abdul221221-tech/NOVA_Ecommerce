@@ -116,7 +116,9 @@ export function CommandBarInner() {
         } else {
           setDidYouMean(null)
         }
-        setShowDropdown(true)
+        if (document.activeElement === inputRef.current) {
+          setShowDropdown(true)
+        }
       } catch (e) {
         console.error(e)
       } finally {
@@ -202,32 +204,20 @@ export function CommandBarInner() {
           }}
         />
 
-        {/* Layer 3: Dynamic Conic Gradient Border */}
-        <div 
-          className="absolute -inset-[1.5px] rounded-full overflow-hidden transition-opacity duration-500 pointer-events-none"
-          style={{ opacity: glowOpacity }}
-        >
-          <div 
-            className="absolute inset-[-100%] animate-spin" 
-            style={{ 
-              animationDuration: spinDuration,
-              background: 'conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--color-accent-primary, #4f46e5) 80%, transparent 100%)' 
-            }} 
-          />
-        </div>
+
         
         {/* Layer 4: Inner Search Box */}
         <div className={`relative flex items-center rounded-full overflow-hidden transition-colors duration-500 border ${
-          isFocused ? 'bg-card border-transparent' : 'bg-muted/80 border-border/50 group-hover:border-border'
+          isFocused ? 'bg-background/60 backdrop-blur-md border-white/20 shadow-inner' : 'bg-white/5 backdrop-blur-sm border-white/10 group-hover:border-white/20'
         }`}>
           {/* Inner Shadow Glow when Typing */}
           <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 rounded-full ${isTyping ? 'opacity-100' : 'opacity-0'}`}
                style={{ boxShadow: 'inset 0 0 15px rgba(var(--accent-primary-rgb, 99, 102, 241), 0.1)' }} 
           />
 
-          <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10 gap-1.5">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10 gap-1.5">
             {isProcessing ? (
-              <Loader2 className="h-5 w-5 text-accent-primary animate-spin" />
+              <Loader2 className="h-4 w-4 text-accent-primary animate-spin" />
             ) : (
               <motion.div
                 animate={{ 
@@ -237,7 +227,7 @@ export function CommandBarInner() {
                 }}
                 transition={{ duration: 0.3 }}
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-4 w-4" />
               </motion.div>
             )}
             <AnimatePresence>
@@ -248,7 +238,7 @@ export function CommandBarInner() {
                   exit={{ opacity: 0, scale: 0, rotate: 45 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
                 >
-                  <Sparkles className="w-4 h-4 text-accent-primary/80" />
+                  <Sparkles className="w-3.5 h-3.5 text-accent-primary/80" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -266,8 +256,8 @@ export function CommandBarInner() {
             onBlur={() => setIsFocused(false)}
             onKeyDown={handleKeyDown}
             className={`w-full bg-transparent border-none relative z-10
-              rounded-full pl-[4.5rem] pr-12 py-3.5 text-[15px] font-medium transition-all duration-300
-              placeholder:text-muted-foreground focus:outline-none focus:ring-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden ${isFocused ? 'text-foreground' : 'text-foreground/80'}`}
+              rounded-full pl-[3.25rem] pr-10 py-2.5 text-sm transition-all duration-300
+              placeholder:text-muted-foreground/70 focus:outline-none focus:ring-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden ${isFocused ? 'text-foreground' : 'text-foreground/80'}`}
             placeholder="Search for products, brands, or categories..."
           />
 
@@ -303,27 +293,17 @@ export function CommandBarInner() {
 
       {/* Suggestions Dropdown - Centered & Compact */}
       <AnimatePresence>
-        {showDropdown && (products.length > 0 || categories.length > 0 || brands.length > 0 || didYouMean || query.length >= 2) && (
+        {showDropdown && (products.length > 0 || categories.length > 0 || brands.length > 0 || didYouMean || isSearching) && (
           <motion.div 
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
             transition={{ duration: 0.2, type: "spring", stiffness: 350, damping: 25 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[calc(100%-1rem)] max-w-[520px] bg-background/95 backdrop-blur-xl rounded-[1.25rem] shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-border/50 overflow-hidden z-40"
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[calc(100%-1rem)] max-w-[520px] bg-white dark:bg-[#0a0514] rounded-[1.25rem] shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-border/50 overflow-hidden z-40"
           >
             <ScrollArea className="max-h-[420px]">
               
-              {didYouMean && flatSuggestions.length === 0 && (
-                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 bg-accent-primary/5 border-b border-border/50">
-                   <button
-                     onClick={() => { setQuery(didYouMean); inputRef.current?.focus() }}
-                     className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent-primary transition-colors group w-full text-left"
-                   >
-                     <HelpCircle className="w-4 h-4 text-accent-primary group-hover:scale-110 transition-transform" />
-                     <span>Did you mean: <span className="font-bold text-accent-primary group-hover:underline">{didYouMean}</span>?</span>
-                   </button>
-                </motion.div>
-              )}
+
 
               {flatSuggestions.length > 0 ? (
                 <motion.div variants={containerVariants} initial="hidden" animate="show" className="py-2 flex flex-col">
@@ -411,7 +391,7 @@ export function CommandBarInner() {
                   <motion.div variants={itemVariants} className="border-t border-border/50 p-2 mt-1 bg-muted/10">
                     <button 
                       onClick={handleSearch}
-                      className="w-full flex items-center justify-between px-4 py-2.5 rounded-[0.6rem] text-sm font-medium bg-accent-primary/10 text-accent-primary hover:bg-accent-primary hover:text-white transition-all group"
+                      className="w-full flex items-center justify-between px-4 py-2.5 rounded-[0.6rem] text-sm font-medium bg-accent-primary/10 text-accent-primary hover:bg-accent-primary hover:text-background transition-all group"
                     >
                       <span>View all results for "{query}"</span>
                       <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
@@ -420,19 +400,29 @@ export function CommandBarInner() {
 
                 </motion.div>
               ) : (
-                <div className="p-8 text-center flex flex-col items-center justify-center">
+                <div className="p-6 text-center flex flex-col items-center justify-center w-full">
                   {isSearching ? (
-                    <div className="relative">
+                    <div className="relative py-8">
                       <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ repeat: Infinity, duration: 1.5 }} className="absolute inset-0 bg-accent-primary blur-xl rounded-full" />
-                      <Loader2 className="w-6 h-6 text-accent-primary animate-spin mb-3 relative z-10" />
+                      <Loader2 className="w-6 h-6 text-accent-primary animate-spin mb-3 relative z-10 mx-auto" />
                     </div>
+                  ) : didYouMean ? (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center py-6 px-4 text-center w-full">
+                      <HelpCircle className="w-8 h-8 text-muted-foreground/30 mb-4" />
+                      <p className="text-sm font-medium text-foreground/80 mb-2">No exact matches found for "{query}".</p>
+                      <button 
+                        onClick={() => { setQuery(didYouMean); inputRef.current?.focus(); }} 
+                        className="text-accent-primary font-bold hover:underline text-lg transition-all group flex items-center justify-center gap-2"
+                      >
+                        Did you mean: {didYouMean}?
+                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                      </button>
+                    </motion.div>
                   ) : (
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center">
-                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3 border border-border">
-                        <Search className="w-5 h-5 text-muted-foreground opacity-50" />
-                      </div>
-                      <p className="text-sm font-medium text-foreground">No results for "{query}"</p>
-                      <p className="text-[11px] text-muted-foreground mt-1">Try another search or browse categories</p>
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center py-8 text-center w-full">
+                      <p className="text-[13px] font-medium text-muted-foreground">
+                        No results found for "{query}". Try another keyword.
+                      </p>
                     </motion.div>
                   )}
                 </div>

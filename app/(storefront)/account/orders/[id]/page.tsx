@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { OrderChat } from '@/components/shared/OrderChat'
 import { ArrowLeft, CheckCircle2, Circle, Package, Truck, Store, XCircle, AlertTriangle } from 'lucide-react'
-import { OrderActionButtons } from '@/components/storefront/OrderActionButtons'
-import { OrderItemActionButtons } from '@/components/storefront/OrderItemActionButtons'
+import { ModifyOrderWorkflow } from '@/components/storefront/ModifyOrderWorkflow'
 import { calculateEligibility } from '@/lib/eligibility'
 import Image from 'next/image'
 
@@ -29,9 +28,10 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
         product_variants ( id, sku, size, color, products ( title, product_images (url) ) )
       ),
       order_status_history ( status, created_at ),
-      return_requests ( id, order_item_id, status ),
-      exchange_requests ( id, order_item_id, status ),
-      refunds ( amount, refund_method, status, requested_at, completed_at )
+      return_requests ( id, order_item_id, status, note ),
+      exchange_requests ( id, order_item_id, status, note ),
+      refunds ( amount, refund_method, status, requested_at, completed_at, reason ),
+      cancellation_requests ( note )
     `)
     .eq('id', id)
     .eq('customer_id', user.id)
@@ -171,7 +171,7 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
           {/* Action Buttons */}
           <Card>
             <CardContent className="pt-6">
-              <OrderActionButtons order={order} variant="detail" />
+              <ModifyOrderWorkflow order={order} variant="detail" />
             </CardContent>
           </Card>
 
@@ -185,14 +185,58 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
                 const product = item.product_variants?.products
                 const eligibility = calculateEligibility(order, item, order.return_requests, order.exchange_requests)
                 const image = product?.product_images?.sort((a:any, b:any) => a.sort_order - b.sort_order)[0]?.url
+                
+                let cancelledQty = 0
+                let returnedQty = 0
+                let exchangedQty = 0
+
+                const parse = (records: any[], type: string) => {
+                  records?.forEach(r => {
+                    try {
+                      const p = JSON.parse(r.note || '{}')
+                      if (p.items) {
+                        p.items.forEach((i: any) => {
+                          if (i.id === item.id) {
+                            if (type === 'cancel') cancelledQty += (i.quantity || 1)
+                            if (type === 'return') returnedQty += (i.quantity || 1)
+                            if (type === 'exchange') exchangedQty += (i.quantity || 1)
+                          }
+                        })
+                      }
+                      // For backward compat
+                      if (type === 'cancel' && p.item_ids && p.item_ids.includes(item.id)) {
+                        cancelledQty = item.quantity
+                      }
+                    } catch(e) {}
+                  })
+                }
+
+                parse(order.cancellation_requests, 'cancel')
+                parse(order.return_requests, 'return')
+                parse(order.exchange_requests, 'exchange')
+
+                if (order.status === 'cancelled' && order.subtotal === 0) {
+                  cancelledQty = item.quantity
+                }
+
+                const totalInactive = cancelledQty + returnedQty + exchangedQty
+                const isFullyInactive = totalInactive >= item.quantity
+
                 return (
                   <div key={item.id} className={`flex flex-col sm:flex-row gap-4 p-4 sm:p-0 ${idx !== order.order_items.length - 1 ? 'border-b border-border/50 pb-6 sm:mb-6' : ''}`}>
                     <div className="w-full sm:w-28 h-48 sm:h-28 bg-muted/30 rounded-xl overflow-hidden relative shrink-0 border border-border/50 shadow-sm">
-                      {image ? <Image src={image} alt="" fill className="object-cover" /> : null}
+                      {image ? <Image src={image} alt="" fill className={`object-cover ${isFullyInactive ? 'grayscale opacity-60' : ''}`} /> : null}
                     </div>
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
-                        <h4 className="font-bold text-base line-clamp-2">{product?.title || 'Unknown Product'}</h4>
+                        <div className="flex items-start justify-between gap-4">
+                          <h4 className={`font-bold text-base line-clamp-2 ${isFullyInactive ? 'line-through text-muted-foreground' : ''}`}>{product?.title || 'Unknown Product'}</h4>
+                          <div className="flex flex-col gap-1 shrink-0">
+                            {cancelledQty > 0 && <Badge variant="destructive" className="rounded-full px-2">Cancelled {cancelledQty}</Badge>}
+                            {returnedQty > 0 && <Badge variant="destructive" className="bg-amber-500 rounded-full px-2">Returned {returnedQty}</Badge>}
+                            {exchangedQty > 0 && <Badge variant="destructive" className="bg-blue-500 rounded-full px-2">Exchanged {exchangedQty}</Badge>}
+                          </div>
+                        </div>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {item.product_variants?.size && <Badge variant="secondary" className="font-medium bg-muted/50">Size: {item.product_variants.size}</Badge>}
                           {item.product_variants?.color && <Badge variant="secondary" className="font-medium bg-muted/50">Color: {item.product_variants.color}</Badge>}
@@ -208,7 +252,6 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
                             ₹{(item.price_at_purchase * item.quantity).toLocaleString('en-IN', {minimumFractionDigits: 2})}
                           </div>
                         </div>
-                        <OrderItemActionButtons order={order} item={item} eligibility={eligibility} />
                       </div>
                     </div>
                   </div>
@@ -233,6 +276,21 @@ export default async function CustomerOrderDetailPage({ params }: { params: Prom
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Shipping</span><span>₹{order.shipping.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">GST</span><span>₹{(order.shipping_address?.gst || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
               <div className="border-t pt-3 mt-1 flex justify-between font-black text-lg"><span>Total</span><span>₹{order.total.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+              
+              {order.refunds && order.refunds.length > 0 && (
+                <div className="border-t border-red-500/20 pt-3 mt-3 space-y-3">
+                  <div className="font-bold text-red-600 dark:text-red-400 text-sm">Refunds Issued</div>
+                  {order.refunds.map((refund: any, i: number) => (
+                    <div key={i} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground flex flex-col">
+                        <span>{refund.reason && refund.reason.includes('{') ? JSON.parse(refund.reason).message : refund.reason || 'Refund'}</span>
+                        <span className="text-xs">{refund.status}</span>
+                      </span>
+                      <span className="text-red-600 dark:text-red-400 font-bold">₹{refund.amount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 

@@ -56,29 +56,12 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const user = session?.user
-    
-    // Parse cookies to find cart_session
-    const getCookie = (name: string) => {
-      if (typeof document === 'undefined') return null
-      const value = `; ${document.cookie}`
-      const parts = value.split(`; ${name}=`)
-      if (parts.length === 2) return parts.pop()?.split(';').shift()
-      return null
-    }
-
-    let query = supabase.from('carts').select('id, cart_items(id, quantity, product_variants(id, size, color, price_override, products(id, title, price, brand, product_images(url, sort_order), stores(name))))')
-    
-    if (user) {
-      query = query.eq('customer_id', user.id)
-    } else {
-      const sessionId = getCookie('cart_session')
-      if (!sessionId) return
-      query = query.eq('session_id', sessionId)
-    }
-
-    const { data } = await query.single()
-    if (data && data.cart_items) {
-      setCartItems(data.cart_items)
+    const { getCart } = await import('@/app/actions/cart')
+    try {
+      const items = await getCart()
+      setCartItems(items || [])
+    } catch (e) {
+      console.error('Failed to load cart:', e)
     }
   }
 

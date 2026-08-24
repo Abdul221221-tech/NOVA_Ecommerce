@@ -65,7 +65,7 @@ export function TheThread() {
           <button 
             onClick={() => router.push('/compare')}
             disabled={compareList.length < 2}
-            className="w-full bg-accent-primary text-white text-sm font-bold py-2.5 rounded-xl hover:bg-accent-primary/90 transition-colors disabled:opacity-50 disabled:hover:bg-accent-primary shadow-md flex items-center justify-center gap-2"
+            className="w-full bg-accent-primary text-background text-sm font-bold py-2.5 rounded-xl hover:bg-accent-primary/90 transition-colors disabled:opacity-50 disabled:hover:bg-accent-primary shadow-md flex items-center justify-center gap-2"
           >
             {compareList.length < 2 ? 'Add 1 more to compare' : 'View Comparison'}
           </button>

@@ -121,7 +121,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
              <div className="border-t pt-6 text-xl font-bold">
                ${product.price.toFixed(2)}
              </div>
-             <Link href={`/products/${product.id}`} className="block w-full bg-accent-primary text-white text-center py-4 rounded-full font-bold">
+             <Link href={`/products/${product.id}`} className="block w-full bg-accent-primary text-background text-center py-4 rounded-full font-bold">
                Buy Now
              </Link>
            </div>
@@ -143,7 +143,7 @@ export function StoryScroller({ product, primaryImage, otherImages }: { product:
           <span className="font-heading font-bold">₹{product.price.toLocaleString('en-IN')}</span>
           <button 
             onClick={handleSkipToBuy}
-            className="bg-accent-primary text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-accent-primary/90 transition-colors"
+            className="bg-accent-primary text-background px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-accent-primary/90 transition-colors"
           >
             <ShoppingBag className="w-4 h-4" /> {added ? 'Adding...' : 'Add to Cart'}
           </button>

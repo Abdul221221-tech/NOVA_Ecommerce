@@ -44,7 +44,7 @@ export function MobileBottomNav() {
               <div className="relative">
                 <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${isActive ? 'fill-accent-primary/20' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-accent-primary text-white text-[9px] sm:text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center shadow-sm">
+                  <span className="absolute -top-1.5 -right-2 bg-accent-primary text-background text-[9px] sm:text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center shadow-sm">
                     {item.badge}
                   </span>
                 )}

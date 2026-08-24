@@ -7,7 +7,7 @@ const benefits = [
   {
     icon: Truck,
     title: 'Free Shipping',
-    subtitle: 'On orders above ₹351',
+    subtitle: 'On orders above ₹500 per store',
     gradient: 'from-amber-500/10 to-orange-500/5',
     iconBg: 'bg-amber-500/10 group-hover:bg-amber-500/20',
     iconColor: 'text-amber-600 dark:text-amber-400',

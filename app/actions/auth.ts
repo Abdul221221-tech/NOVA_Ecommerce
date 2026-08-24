@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { mergeGuestCart } from './cart'
 
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 
@@ -30,6 +31,8 @@ export async function login(formData: FormData) {
   }
 
   if (data?.user) {
+    await mergeGuestCart(data.user.id)
+    
     // Failsafe: if profile is somehow missing, try to create it silently
     const { data: profile } = await supabase.from('profiles').select('id').eq('id', data.user.id).single()
     if (!profile) {
@@ -138,6 +141,8 @@ export async function signup(formData: FormData) {
       email,
       password
     })
+    
+    await mergeGuestCart(data.user.id)
   }
 
   if (role === 'seller') return redirect('/seller')

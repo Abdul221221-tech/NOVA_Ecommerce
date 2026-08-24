@@ -25,119 +25,91 @@ export async function POST(req: Request) {
 
   if (event.type === 'payment_intent.succeeded') {
     const paymentIntent = event.data.object as any
-    const { cartId, orderGroupId, customerId } = paymentIntent.metadata
-
-    if (!cartId || !orderGroupId) {
-      console.error('Missing metadata in PaymentIntent')
+    const paymentIntentId = paymentIntent.id
+    
+    // Find orders with this payment intent ID
+    const { data: orders, error } = await supabaseAdmin
+      .from('orders')
+      .select('id, store_id, seller_payout, order_group_id')
+      .eq('stripe_payment_intent_id', paymentIntentId)
+      
+    if (error || !orders || orders.length === 0) {
+      console.error('Failed to find orders for payment intent', paymentIntentId)
       return NextResponse.json({ received: true }) // Acknowledge to stop retries
     }
 
-    // 1. Fetch Cart Items
-    const { data: cartItems } = await supabaseAdmin
-      .from('cart_items')
-      .select(`
-        id, quantity, product_variant_id,
-        product_variants (
-          id, price_override, stock_quantity,
-          products (
-            id, price, store_id,
-            stores ( id, stripe_connect_account_id )
-          )
-        )
-      `)
-      .eq('cart_id', cartId)
-
-    if (!cartItems || cartItems.length === 0) return NextResponse.json({ received: true })
-
-    // 2. Group by Store
-    const storeOrders: Record<string, any> = {}
-
-    cartItems.forEach((item: any) => {
-      const variant = item.product_variants
-      const product = variant.products
-      const store = product.stores
-      const price = variant.price_override ?? product.price
-
-      // Skip items without a connected account (they shouldn't have been charged anyway)
-      if (!store.stripe_connect_account_id) return
-
-      if (!storeOrders[store.id]) {
-        storeOrders[store.id] = {
-          storeId: store.id,
-          stripeAccountId: store.stripe_connect_account_id,
-          subtotal: 0,
-          items: []
-        }
-      }
-
-      storeOrders[store.id].subtotal += (price * item.quantity)
-      storeOrders[store.id].items.push({
-        variantId: variant.id,
-        quantity: item.quantity,
-        priceAtPurchase: price,
-        currentStock: variant.stock_quantity
-      })
-    })
-
-    // 3. Process each Store Order
-    for (const [storeId, orderData] of Object.entries(storeOrders)) {
-      const subtotal = orderData.subtotal
-      const platformFee = subtotal * PLATFORM_FEE_PERCENTAGE
-      const sellerPayout = subtotal - platformFee
-
-      // Create Order Row
-      const { data: newOrder, error: orderError } = await supabaseAdmin
+    // Update all matching orders to 'paid'
+    for (const order of orders) {
+      await supabaseAdmin
         .from('orders')
+        .update({ status: 'paid' })
+        .eq('id', order.id)
+        
+      // Add history entry
+      await supabaseAdmin
+        .from('order_status_history')
         .insert({
-          order_group_id: orderGroupId,
-          customer_id: customerId === 'guest' ? null : customerId,
-          store_id: storeId,
+          order_id: order.id,
           status: 'paid',
-          subtotal,
-          shipping: 0, // Simplified for Phase 5
-          platform_fee: platformFee,
-          seller_payout: sellerPayout,
-          total: subtotal, // Assuming no shipping
-          stripe_payment_intent_id: paymentIntent.id
+          note: 'Payment successful via Stripe',
+          created_by: null // System
         })
-        .select('id')
-        .single()
-
-      if (orderError || !newOrder) {
-        console.error('Failed to create order for store', storeId, orderError)
-        continue
-      }
-
-      // Insert Order Items & Decrement Stock
-      for (const item of orderData.items) {
-        await supabaseAdmin.from('order_items').insert({
-          order_id: newOrder.id,
-          product_variant_id: item.variantId,
-          quantity: item.quantity,
-          price_at_purchase: item.priceAtPurchase
-        })
-
-        // Decrement stock
-        const newStock = Math.max(0, item.currentStock - item.quantity)
-        await supabaseAdmin.from('product_variants').update({ stock_quantity: newStock }).eq('id', item.variantId)
-      }
-
-      // 4. Trigger Stripe Transfer
+        
+      // Attempt Stripe Transfer to seller (Optional / Phase 5)
       try {
-        await stripe.transfers.create({
-          amount: Math.round(sellerPayout * 100),
-          currency: 'usd',
-          destination: orderData.stripeAccountId,
-          transfer_group: orderGroupId,
-        })
+        const { data: store } = await supabaseAdmin
+          .from('stores')
+          .select('stripe_connect_account_id')
+          .eq('id', order.store_id)
+          .single()
+          
+        if (store && store.stripe_connect_account_id) {
+          await stripe.transfers.create({
+            amount: Math.round(order.seller_payout * 100),
+            currency: 'inr',
+            destination: store.stripe_connect_account_id,
+            transfer_group: order.order_group_id,
+          })
+        }
       } catch (transferError) {
-        console.error('Stripe Transfer failed for store', storeId, transferError)
-        // Log this to a dead-letter queue or alert platform admin for manual retry
+        console.error('Stripe Transfer failed for store', order.store_id, transferError)
       }
     }
-
-    // 5. Clear the Cart
-    await supabaseAdmin.from('carts').delete().eq('id', cartId)
+    
+    // Notify Customer
+    if (orders.length > 0) {
+      try {
+        const orderGroupId = orders[0].order_group_id;
+        const { data: firstOrder } = await supabaseAdmin.from('orders').select('customer_id').eq('id', orders[0].id).single();
+        if (firstOrder?.customer_id) {
+          const { createNotification } = await import('@/app/actions/notifications');
+          await createNotification(firstOrder.customer_id, {
+            title: 'Payment Successful',
+            message: `Payment for Order #${orderGroupId.split('-')[0]} has been successfully received.`,
+            type: 'payment',
+            related_id: orderGroupId,
+            icon: 'CheckCircle'
+          });
+          
+          // Notify Sellers
+          for (const order of orders) {
+             const { data: store } = await supabaseAdmin.from('stores').select('owner_id').eq('id', order.store_id).single();
+             if (store?.owner_id) {
+               await createNotification(store.owner_id, {
+                 title: 'Payment Confirmed',
+                 message: `Payment for Order #${orderGroupId.split('-')[0]} was successful. You can start fulfilling the order.`,
+                 type: 'payment',
+                 related_id: order.id,
+                 icon: 'CheckCircle',
+                 href: `/seller/orders/${order.id}`
+               });
+             }
+          }
+        }
+      } catch(e) {
+        console.error('Failed to notify payment success', e);
+      }
+    }
   }
 
   return NextResponse.json({ received: true })

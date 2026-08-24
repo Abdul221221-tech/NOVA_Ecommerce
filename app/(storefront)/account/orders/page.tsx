@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Package, Truck, CheckCircle2, Clock, ChevronRight, Wallet, MapPin, CalendarDays } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { OrderActionButtons } from '@/components/storefront/OrderActionButtons'
+import { ModifyOrderWorkflow } from '@/components/storefront/ModifyOrderWorkflow'
 
 export default async function CustomerAccountPage() {
   const supabase = await createClient()
@@ -17,7 +17,7 @@ export default async function CustomerAccountPage() {
   const { data: orders } = await supabase
     .from('orders')
     .select(`
-      id, order_group_id, created_at, status, total, shipping_address,
+      id, order_group_id, created_at, status, total, shipping, shipping_address,
       stores ( name ),
       order_items (
         id, quantity, price_at_purchase,
@@ -28,7 +28,10 @@ export default async function CustomerAccountPage() {
             product_images ( url, sort_order )
           )
         )
-      )
+      ),
+      cancellation_requests ( note ),
+      return_requests ( note ),
+      exchange_requests ( note )
     `)
     .eq('customer_id', user.id)
     .order('created_at', { ascending: false })
@@ -174,7 +177,7 @@ export default async function CustomerAccountPage() {
 
                 {/* Footer Action */}
                 <div className="px-6 md:px-8 py-4 bg-muted/5 group-hover:bg-muted/10 border-t border-border/50 flex justify-end transition-colors">
-                  <OrderActionButtons order={order} variant="list" />
+                  <ModifyOrderWorkflow order={order} variant="list" />
                 </div>
 
               </div>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { OrderChat } from '@/components/shared/OrderChat'
 import { ArrowLeft } from 'lucide-react'
@@ -25,8 +26,11 @@ export default async function SellerOrderDetailPage({ params }: { params: { id: 
       profiles ( name, email ),
       order_items (
         id, quantity, price_at_purchase,
-        product_variants ( sku, size, color, products ( title, product_images (url) ) )
-      )
+        product_variants ( id, sku, size, color, products ( title, product_images (url) ) )
+      ),
+      cancellation_requests ( note ),
+      return_requests ( note ),
+      exchange_requests ( note )
     `)
     .eq('id', params.id)
     .eq('store_id', store.id)
@@ -100,13 +104,57 @@ export default async function SellerOrderDetailPage({ params }: { params: { id: 
               {order.order_items?.map((item: any) => {
                 const product = item.product_variants?.products
                 const image = product?.product_images?.[0]?.url
+                
+                let cancelledQty = 0
+                let returnedQty = 0
+                let exchangedQty = 0
+
+                const parse = (records: any[], type: string) => {
+                  records?.forEach(r => {
+                    try {
+                      const p = JSON.parse(r.note || '{}')
+                      if (p.items) {
+                        p.items.forEach((i: any) => {
+                          if (i.id === item.id) {
+                            if (type === 'cancel') cancelledQty += (i.quantity || 1)
+                            if (type === 'return') returnedQty += (i.quantity || 1)
+                            if (type === 'exchange') exchangedQty += (i.quantity || 1)
+                          }
+                        })
+                      }
+                      // For backward compat with my initial hack
+                      if (type === 'cancel' && p.item_ids && p.item_ids.includes(item.id)) {
+                        cancelledQty = item.quantity
+                      }
+                    } catch(e) {}
+                  })
+                }
+
+                parse(order.cancellation_requests, 'cancel')
+                parse(order.return_requests, 'return')
+                parse(order.exchange_requests, 'exchange')
+
+                if (order.status === 'cancelled' && order.subtotal === 0) {
+                  cancelledQty = item.quantity
+                }
+
+                const totalInactive = cancelledQty + returnedQty + exchangedQty
+                const isFullyInactive = totalInactive >= item.quantity
+
                 return (
-                  <div key={item.id} className="flex gap-4 border-b pb-4 last:border-0 last:pb-0">
+                  <div key={item.id} className={`flex gap-4 border-b pb-4 last:border-0 last:pb-0 ${isFullyInactive ? 'opacity-75' : ''}`}>
                     <div className="w-16 h-16 bg-muted rounded-md overflow-hidden relative shrink-0">
-                      {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : null}
+                      {image ? <img src={image} alt="" className={`w-full h-full object-cover ${isFullyInactive ? 'grayscale' : ''}`} /> : null}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium">{product?.title || 'Unknown Product'}</h4>
+                      <div className="flex items-start justify-between">
+                        <h4 className={`font-medium ${isFullyInactive ? 'line-through text-muted-foreground' : ''}`}>{product?.title || 'Unknown Product'}</h4>
+                        <div className="flex gap-1">
+                          {cancelledQty > 0 && <Badge variant="destructive" className="text-[10px] px-1.5 py-0 rounded-sm">Cancelled {cancelledQty}</Badge>}
+                          {returnedQty > 0 && <Badge variant="destructive" className="bg-amber-500 text-[10px] px-1.5 py-0 rounded-sm">Returned {returnedQty}</Badge>}
+                          {exchangedQty > 0 && <Badge variant="destructive" className="bg-blue-500 text-[10px] px-1.5 py-0 rounded-sm">Exchanged {exchangedQty}</Badge>}
+                        </div>
+                      </div>
                       <div className="text-sm text-muted-foreground space-x-2">
                         {item.product_variants?.sku && <span className="font-mono">SKU: {item.product_variants.sku}</span>}
                         {item.product_variants?.size && <span>Size: {item.product_variants.size}</span>}

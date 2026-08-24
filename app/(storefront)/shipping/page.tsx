@@ -130,10 +130,10 @@ export default function ShippingPage() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Free Shipping</h2>
             </div>
             <p className="text-muted-foreground mb-4">
-              Many NOVA sellers may offer free domestic shipping when your order meets their specified minimum order value.
+              NOVA offers free domestic shipping automatically when your merchandise subtotal from a single store reaches <strong>₹500</strong> or more.
             </p>
             <p className="text-muted-foreground">
-              If free shipping is available, the applicable offer will be displayed during checkout.
+              Because NOVA is a multi-vendor marketplace, this threshold is calculated separately for each store in your cart. For store orders under ₹500, a standard shipping fee of ₹40 applies.
             </p>
           </section>
         </div>

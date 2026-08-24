@@ -26,18 +26,22 @@ export function QuickViewModal({ product, isOpen, onClose }: { product: any, isO
         
         <div className="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden min-h-0">
           {/* Image Gallery Side */}
-          <div className="relative w-full shrink-0 aspect-square max-h-[45vh] md:max-h-none md:aspect-auto md:w-1/2 md:h-full bg-slate-50 dark:bg-slate-900">
-            {primaryImage ? (
-              <Image 
-                src={primaryImage} 
-                alt={product.title} 
-                fill 
-                className="object-cover" 
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image available</div>
-            )}
+          <div className="relative w-full shrink-0 aspect-square max-h-[45vh] md:max-h-none md:aspect-auto md:w-1/2 bg-slate-50 dark:bg-slate-900 flex items-stretch">
+            <div className="relative w-full h-full min-h-[300px]">
+              {primaryImage ? (
+                <Image 
+                  src={primaryImage} 
+                  alt={product.title} 
+                  fill 
+                  className="object-cover" 
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                  No image available
+                </div>
+              )}
+            </div>
           </div>
           
           {/* Details Side */}
@@ -86,7 +90,7 @@ export function QuickViewModal({ product, isOpen, onClose }: { product: any, isO
 
             {/* Actions */}
             <div className="mt-auto shrink-0 pt-4">
-              <Button onClick={() => window.location.href = `/products/${product.id}`} className="w-full h-14 text-base font-semibold rounded-2xl bg-accent-primary hover:bg-accent-primary/90 text-white shadow-[0_10px_20px_-10px_rgba(var(--accent-primary-rgb),0.5)] transition-all hover:-translate-y-0.5">
+              <Button onClick={() => window.location.href = `/products/${product.id}`} className="w-full h-14 text-base font-semibold rounded-2xl bg-accent-primary hover:bg-accent-primary/90 text-background shadow-[0_10px_20px_-10px_rgba(var(--accent-primary-rgb),0.5)] transition-all hover:-translate-y-0.5">
                 View Full Details
               </Button>
             </div>

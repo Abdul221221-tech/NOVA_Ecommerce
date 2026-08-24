@@ -7,9 +7,11 @@ import { placeOrder, validateCouponAction } from '@/app/actions/checkout'
 import { getUserAddresses, addUserAddress, updateUserAddress, deleteUserAddress, Address, AddressInput } from '@/app/actions/addresses'
 import { useStorefront } from '@/components/storefront/StorefrontProvider'
 import { toast } from 'sonner'
-import { Loader2, ArrowRight, MapPin, CheckCircle2, CreditCard, Wallet, Landmark, Banknote, Tag, CalendarDays, Plus, Edit2, Trash2 } from 'lucide-react'
+import { Loader2, ArrowRight, MapPin, CheckCircle2, CreditCard, Wallet, Landmark, Banknote, Tag, CalendarDays, Plus, Edit2, Trash2, ChevronRight, ChevronDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { StripePaymentModal } from './StripePaymentModal'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 interface CheckoutFlowProps {
   itemsByStore: Record<string, any>
@@ -30,6 +32,7 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([])
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(true)
   const [addressFormMode, setAddressFormMode] = useState<'list' | 'add' | 'edit'>('list')
+  const [showGstDetails, setShowGstDetails] = useState(false)
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null)
   
   const [address, setAddress] = useState({
@@ -47,6 +50,9 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
   const [couponCode, setCouponCode] = useState('')
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false)
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string, discountAmount: number } | null>(null)
+
+  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null)
+  const [stripeOrderGroupId, setStripeOrderGroupId] = useState<string | null>(null)
 
   const router = useRouter()
   const { refreshCart } = useStorefront()
@@ -148,28 +154,29 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
   }
 
   // Derived Calculations
-  const { subtotal, gstTotal } = useMemo(() => {
-    let sub = 0
-    let gst = 0
-    Object.values(itemsByStore).forEach((storeGroup: any) => {
-      storeGroup.items.forEach((item: any) => {
-        const itemTotal = item.price * item.quantity
-        sub += itemTotal
-        
-        const lowerTitle = item.title.toLowerCase()
-        let gstRate = 18 // default
-        if (lowerTitle.includes('shirt') || lowerTitle.includes('shoe') || lowerTitle.includes('apparel')) gstRate = 12
-        else if (lowerTitle.includes('laptop') || lowerTitle.includes('phone') || lowerTitle.includes('electronics')) gstRate = 18
-        
-        gst += (itemTotal * gstRate) / 100
-      })
-    })
-    return { subtotal: sub, gstTotal: gst }
-  }, [itemsByStore])
+  const pricingInput: Record<string, { storeName: string, items: any[] }> = {}
+  Object.keys(itemsByStore).forEach(storeId => {
+    pricingInput[storeId] = {
+      storeName: itemsByStore[storeId].storeName,
+      items: itemsByStore[storeId].items.map((i: any) => ({
+        ...i,
+        quantity: i.quantity,
+        price: i.price,
+        gst_rate: i.product?.gst_rate ?? i.gst_rate // Try getting gst_rate from nested product if available
+      }))
+    }
+  })
 
-  const shippingCharge = subtotal > 500 ? 0 : 40
+  // We need to import calculateGlobalTotals. It's a client component, so we can require it.
+  const { calculateGlobalTotals } = require('@/lib/pricing')
+  
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
-  const finalTotal = subtotal + shippingCharge + gstTotal - discountAmount
+  const totals = calculateGlobalTotals(pricingInput, discountAmount)
+  
+  const subtotal = totals.globalSubtotal
+  const gstTotal = totals.globalGst
+  const shippingCharge = totals.globalShipping
+  const finalTotal = totals.globalTotal
 
   // Estimate Delivery Date (3-5 days from now)
   const deliveryDateOptions = useMemo(() => {
@@ -235,8 +242,15 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
         return
       }
       await refreshCart()
-      toast.success('Order placed successfully!')
-      router.push(`/checkout/success/${res.orderGroupId}`)
+      
+      if (res.clientSecret) {
+        // Render Stripe checkout
+        setStripeClientSecret(res.clientSecret)
+        setStripeOrderGroupId(res.orderGroupId!)
+      } else {
+        toast.success('Order placed successfully!')
+        router.push(`/checkout/success/${res.orderGroupId}`)
+      }
     } catch (err: any) {
       toast.error(err.message || 'An unexpected error occurred')
       setIsPlacing(false)
@@ -518,9 +532,46 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
                 <span>₹{shippingCharge.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               )}
             </div>
-            <div className="flex justify-between items-center text-muted-foreground">
-              <span>Estimated GST</span>
-              <span>₹{gstTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <div className="flex flex-col gap-2">
+              <button 
+                onClick={() => setShowGstDetails(!showGstDetails)}
+                className="flex justify-between items-center text-muted-foreground hover:text-foreground transition-colors w-full"
+              >
+                <span className="flex items-center gap-1">
+                  Estimated GST 
+                  {showGstDetails ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </span>
+                <span>₹{gstTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </button>
+              
+              <AnimatePresence>
+                {showGstDetails && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pl-4 border-l-2 border-border/50 py-2 space-y-2 mt-1">
+                      {Object.values(pricingInput).map((store: any, sIdx) => 
+                        store.items.map((item: any, iIdx: number) => {
+                          const itemTotal = item.price * item.quantity;
+                          const actualRate = typeof item.gst_rate === 'number' ? item.gst_rate : 18;
+                          const itemGst = (itemTotal * actualRate) / 100;
+                          return (
+                            <div key={`${sIdx}-${iIdx}`} className="flex justify-between text-xs text-muted-foreground">
+                              <span className="truncate max-w-[200px]" title={item.title}>
+                                {item.title} ({actualRate}%)
+                              </span>
+                              <span>₹{itemGst.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                          )
+                        })
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             {discountAmount > 0 && (
               <div className="flex justify-between items-center text-status-success font-medium">
@@ -549,7 +600,7 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
             <button
               onClick={handlePlaceOrder}
               disabled={isPlacing || finalTotal <= 0 || addressFormMode !== 'list' || !paymentMethod}
-              className="w-full h-14 bg-foreground text-background hover:bg-accent-primary hover:text-white transition-all rounded-xl font-bold text-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg"
+              className="w-full h-14 bg-foreground text-background hover:bg-accent-primary hover:text-background transition-all rounded-xl font-bold text-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg"
             >
               {isPlacing ? (
                 <span className="flex items-center">
@@ -569,6 +620,20 @@ export default function CheckoutFlow({ itemsByStore, profile }: CheckoutFlowProp
           </div>
         </div>
       </div>
+
+      {stripeClientSecret && stripeOrderGroupId && (
+        <StripePaymentModal 
+          clientSecret={stripeClientSecret}
+          orderGroupId={stripeOrderGroupId}
+          amount={finalTotal}
+          onCancel={() => {
+            setStripeClientSecret(null)
+            setStripeOrderGroupId(null)
+            toast.info('Payment cancelled. Your order has been placed but awaits payment.')
+            router.push(`/account/orders`)
+          }}
+        />
+      )}
     </div>
   )
 }

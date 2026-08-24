@@ -9,13 +9,13 @@ export async function generateReviewSummary(productId: string) {
     const supabase = await createClient()
     const { data: reviews } = await supabase
       .from('reviews')
-      .select('rating, comment')
+      .select('rating, body')
       .eq('product_id', productId)
 
     if (!reviews || reviews.length === 0) return null
 
     // We only summarize if there are enough reviews to matter (e.g. at least 1)
-    const reviewText = reviews.map(r => `Rating: ${r.rating}/5 - ${r.comment}`).join('\n')
+    const reviewText = reviews.map(r => `Rating: ${r.rating}/5 - ${r.body}`).join('\n')
 
     const { text } = await generateText({
       model: google('gemini-1.5-flash'),

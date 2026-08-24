@@ -32,7 +32,7 @@ export function AccountNav() {
             href={item.href}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
               isActive 
-                ? 'bg-accent-primary text-white shadow-md' 
+                ? 'bg-accent-primary text-background shadow-md' 
                 : 'text-foreground/70 hover:bg-muted hover:text-foreground'
             }`}
           >

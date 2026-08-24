@@ -240,7 +240,7 @@ export function ShopFilterDrawer() {
           <Button variant="ghost" onClick={clearFilters} className="text-muted-foreground hover:text-foreground">
             Clear All
           </Button>
-          <Button onClick={applyFilters} className="bg-accent-primary hover:bg-accent-primary/90 text-white rounded-full px-8">
+          <Button onClick={applyFilters} className="bg-accent-primary hover:bg-accent-primary/90 text-background rounded-full px-8">
             Apply Filters {activeCount > 0 && `(${activeCount})`}
           </Button>
         </SheetFooter>

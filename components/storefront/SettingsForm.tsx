@@ -311,8 +311,8 @@ export function SettingsForm({ initialSettings }: { initialSettings: any }) {
                 
                 <div className="space-y-4">
                   <Label className="text-base font-semibold text-slate-900 dark:text-white">Theme Preference</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {['light', 'dark', 'system'].map((t) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {['light', 'dark'].map((t) => (
                       <div 
                         key={t}
                         onClick={() => handleChange('theme_preference', t)}

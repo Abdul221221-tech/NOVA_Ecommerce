@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+import { calculateGlobalTotals, PRICING_CONFIG } from '@/lib/pricing'
 export default function CartPage() {
   const { cartItems, refreshCart } = useStorefront()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
@@ -74,11 +75,8 @@ export default function CartPage() {
     )
   }
 
-  // Calculate totals
-  let subtotal = 0
-  let eligibleForCheckout = 0
-
-  const itemsByStore: Record<string, any> = {}
+  // Calculate totals using centralized engine
+  const pricingInput: Record<string, { storeName: string, items: any[] }> = {}
 
   cartItems.forEach(item => {
     const variant = item.product_variants
@@ -87,30 +85,34 @@ export default function CartPage() {
     const price = variant.price_override ?? product.price
     const primaryImage = product.product_images?.sort((a:any, b:any) => a.sort_order - b.sort_order)[0]?.url
     
-    if (!itemsByStore[store.id]) {
-      itemsByStore[store.id] = {
+    if (!pricingInput[store.id]) {
+      pricingInput[store.id] = {
         storeName: store.name,
-        hasStripe: true, // Mocked for conceptual flow
         items: []
       }
     }
     
-    itemsByStore[store.id].items.push({
+    pricingInput[store.id].items.push({
       ...item,
       title: product.title,
       price,
       size: variant.size,
       color: variant.color,
-      image: primaryImage
+      image: primaryImage,
+      quantity: item.quantity,
+      gst_rate: product.gst_rate // May be undefined in cart view, but fallback handles it
     })
-
-    subtotal += (price * item.quantity)
-    eligibleForCheckout += (price * item.quantity)
   })
 
-  // Free shipping threshold (example: ₹5000)
-  const shippingCharge = eligibleForCheckout > 5000 ? 0 : 250
-  const finalTotal = eligibleForCheckout + shippingCharge
+  // We can just alias itemsByStore to pricingInput for rendering
+  const itemsByStore = pricingInput
+  const totals = calculateGlobalTotals(pricingInput)
+  
+  const subtotal = totals.globalSubtotal
+  const eligibleForCheckout = subtotal // Kept for backwards compatibility in JSX
+  const shippingCharge = totals.globalShipping
+  // finalTotal for cart preview (GST is calculated exactly at checkout when address is known, though we have a globalGst estimate here)
+  const finalTotal = subtotal + shippingCharge
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl min-h-[70vh]">
@@ -262,12 +264,12 @@ export default function CartPage() {
 
             <div className="mt-8 space-y-3">
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <ShieldCheck className="w-5 h-5 text-accent-primary" />
+                <ShieldCheck className="w-5 h-5 text-indigo-500" />
                 <span>Secure Checkout powered by Stripe</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Truck className="w-5 h-5 text-accent-primary" />
-                <span>Free shipping on orders over ₹5,000</span>
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-3">
+                <Truck className="w-5 h-5 text-emerald-500" />
+                <span>Free shipping on store orders over ₹{PRICING_CONFIG.FREE_SHIPPING_THRESHOLD.toLocaleString('en-IN')}</span>
               </div>
             </div>
           </div>

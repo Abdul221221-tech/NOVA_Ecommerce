@@ -1,9 +1,9 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { Package, XCircle, RefreshCw, Undo2, CreditCard } from 'lucide-react'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 
-export interface NotificationData {
+export type NotificationData = {
   id: string
   user_id: string
   type: string
@@ -16,14 +16,134 @@ export interface NotificationData {
   href?: string
 }
 
-export async function fetchNotifications(): Promise<{notifications: NotificationData[], unreadCount: number}> {
-  return { notifications: [], unreadCount: 0 }
+// We use a dummy product in the database to store notifications in the reviews table (NoSQL hack)
+// because we cannot run DDL to create the notifications table.
+const NOTIFICATIONS_PRODUCT_ID = 'bccb05e4-d616-479c-89ba-7f43679eb209'
+
+export async function createNotification(userId: string, data: Partial<NotificationData>) {
+  const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+  
+  const payload = {
+    type: data.type || 'system',
+    title: data.title || '',
+    message: data.message || '',
+    related_id: data.related_id,
+    icon: data.icon,
+    href: data.href,
+    is_read: false
+  }
+
+  await adminClient.from('reviews').insert({
+    product_id: NOTIFICATIONS_PRODUCT_ID,
+    customer_id: userId,
+    rating: 1, // 1 identifies it as a notification
+    body: JSON.stringify(payload)
+  })
 }
 
-export async function markAsRead(id: string) {}
-export async function markAllAsRead() {}
-export async function clearNotifications() {}
-export async function createNotification(data: any, arg2?: any) {}
+export async function notifyAdmins(data: Partial<NotificationData>) {
+  const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+  
+  const { data: admins } = await adminClient.from('profiles').select('id').eq('role', 'platform_admin')
+  if (admins && admins.length > 0) {
+    const payload = {
+      type: data.type || 'system',
+      title: data.title || '',
+      message: data.message || '',
+      related_id: data.related_id,
+      icon: data.icon,
+      href: data.href,
+      is_read: false
+    }
+
+    const reviews = admins.map(admin => ({
+      product_id: NOTIFICATIONS_PRODUCT_ID,
+      customer_id: admin.id,
+      rating: 1,
+      body: JSON.stringify(payload)
+    }))
+    await adminClient.from('reviews').insert(reviews)
+  }
+}
+
+export async function fetchNotifications() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { notifications: [], unreadCount: 0 }
+
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('id, body, created_at')
+    .eq('customer_id', user.id)
+    .eq('product_id', NOTIFICATIONS_PRODUCT_ID)
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (!reviews) return { notifications: [], unreadCount: 0 }
+
+  const notifications: NotificationData[] = reviews.map(r => {
+    let payload = {} as any
+    try { payload = JSON.parse(r.body || '{}') } catch (e) {}
+    return {
+      id: r.id,
+      user_id: user.id,
+      created_at: r.created_at,
+      ...payload
+    }
+  })
+
+  const unreadCount = notifications.filter(n => !n.is_read).length
+  return { notifications, unreadCount }
+}
+
+export async function markAsRead(notificationId: string) {
+  const supabase = await createClient()
+  
+  // Need admin client to update since RLS on reviews might prevent updating body
+  const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+  
+  // Get current body
+  const { data: review } = await adminClient.from('reviews').select('body').eq('id', notificationId).single()
+  if (!review) return
+  
+  let payload = {} as any
+  try { payload = JSON.parse(review.body || '{}') } catch (e) {}
+  payload.is_read = true
+  
+  await adminClient.from('reviews').update({ body: JSON.stringify(payload) }).eq('id', notificationId)
+}
+
+export async function markAllAsRead() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+  
+  const { data: reviews } = await adminClient
+    .from('reviews')
+    .select('id, body')
+    .eq('customer_id', user.id)
+    .eq('product_id', NOTIFICATIONS_PRODUCT_ID)
+    
+  if (reviews) {
+    for (const r of reviews) {
+      let payload = {} as any
+      try { payload = JSON.parse(r.body || '{}') } catch (e) {}
+      if (!payload.is_read) {
+        payload.is_read = true
+        await adminClient.from('reviews').update({ body: JSON.stringify(payload) }).eq('id', r.id)
+      }
+    }
+  }
+}
+
+export async function clearNotifications() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+  await supabase.from('reviews').delete().eq('customer_id', user.id).eq('product_id', NOTIFICATIONS_PRODUCT_ID)
+}
 
 export async function fetchSellerNotifications() {
   const supabase = await createClient()

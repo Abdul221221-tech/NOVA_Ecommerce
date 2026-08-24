@@ -35,20 +35,42 @@ export default async function CartPage() {
   // Fetch cart items with nested products/stores
   let cartItems: any[] = []
   if (cartId) {
-    const { data } = await supabase
+    let query = supabase
       .from('cart_items')
       .select(`
         id, quantity,
         product_variants (
           id, size, color, price_override,
           products (
-            id, title, price,
+            id, title, price, gst_rate,
             stores ( id, name, stripe_connect_account_id ),
             product_images ( url, sort_order )
           )
         )
       `)
       .eq('cart_id', cartId)
+      
+    let { data, error } = await query
+
+    if (error && error.code === '42703') {
+      const fallbackQuery = supabase
+        .from('cart_items')
+        .select(`
+          id, quantity,
+          product_variants (
+            id, size, color, price_override,
+            products (
+              id, title, price,
+              stores ( id, name, stripe_connect_account_id ),
+              product_images ( url, sort_order )
+            )
+          )
+        `)
+        .eq('cart_id', cartId)
+      const res = await fallbackQuery
+      data = res.data
+    }
+    
     if (data) cartItems = data
   }
 

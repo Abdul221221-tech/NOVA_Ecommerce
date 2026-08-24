@@ -1,5 +1,5 @@
 import { getSimilarProducts } from '@/app/actions/recommendations'
-import { ProductCard } from '@/components/storefront/ProductCard'
+import { ProductCarousel } from '@/components/storefront/ProductCarousel'
 import { Sparkles } from 'lucide-react'
 
 export async function YouMightAlsoLike({ productId }: { productId: string }) {
@@ -18,16 +18,12 @@ export async function YouMightAlsoLike({ productId }: { productId: string }) {
   }))
 
   return (
-    <div className="mt-24 border-t pt-16">
+    <div className="w-full">
       <div className="flex items-center gap-2 mb-8">
         <Sparkles className="w-5 h-5 text-accent-primary" />
-        <h2 className="font-heading text-2xl font-bold">You Might Also Like</h2>
+        <h2 className="font-heading text-3xl font-bold">You Might Also Like</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {formattedProducts.map((product: any) => (
-          <ProductCard key={product.id} product={product as any} />
-        ))}
-      </div>
+      <ProductCarousel products={formattedProducts} />
     </div>
   )
 }

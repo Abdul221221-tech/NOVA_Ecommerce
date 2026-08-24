@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition, useEffect } from 'react'
-import { Bell, Check, CheckCheck, Trash2, Package, Tag, Heart, Sparkles, Megaphone, Info } from 'lucide-react'
+import { Bell, Check, CheckCheck, Trash2, Package, Tag, Heart, Sparkles, Megaphone, Info, Undo2, RefreshCw } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -23,6 +23,69 @@ export function NotificationDropdown({ initialNotifications = [], initialUnreadC
     setNotifications(initialNotifications)
     setUnreadCount(initialUnreadCount)
   }, [initialNotifications, initialUnreadCount])
+
+  useEffect(() => {
+    let channel: any
+
+    const setupRealtime = async () => {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      
+      const channelName = `user-notifications-${user.id}-${Math.random().toString(36).substring(2, 9)}`
+      
+      channel = supabase
+        .channel(channelName)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'reviews', filter: `customer_id=eq.${user.id}` },
+          (payload) => {
+            if (payload.new.rating === 1 && payload.new.product_id === 'bccb05e4-d616-479c-89ba-7f43679eb209') {
+              let notifPayload = {} as any
+              try { notifPayload = JSON.parse(payload.new.body || '{}') } catch (e) {}
+              
+              const newNotif = {
+                id: payload.new.id,
+                user_id: payload.new.customer_id,
+                created_at: payload.new.created_at,
+                ...notifPayload
+              } as NotificationData
+
+              setNotifications(prev => [newNotif, ...prev])
+              if (!newNotif.is_read) {
+                setUnreadCount(prev => prev + 1)
+                toast('New Notification', { description: newNotif.title })
+              }
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'reviews', filter: `customer_id=eq.${user.id}` },
+          (payload) => {
+            if (payload.new.rating === 1 && payload.new.product_id === 'bccb05e4-d616-479c-89ba-7f43679eb209') {
+              let notifPayload = {} as any
+              try { notifPayload = JSON.parse(payload.new.body || '{}') } catch (e) {}
+              
+              setNotifications(prev => prev.map(n => n.id === payload.new.id ? {
+                ...n,
+                ...notifPayload
+              } : n))
+            }
+          }
+        )
+        .subscribe()
+    }
+    
+    setupRealtime()
+
+    return () => {
+      if (channel) {
+        channel.unsubscribe()
+      }
+    }
+  }, [])
 
   const handleMarkAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
@@ -53,18 +116,26 @@ export function NotificationDropdown({ initialNotifications = [], initialUnreadC
     })
   }
 
-  const getIconForType = (type: string) => {
-    switch (type) {
+  const getIconForType = (n: NotificationData) => {
+    if (n.icon === 'Package') return <Package className="w-4 h-4 text-blue-500" />
+    if (n.icon === 'Undo2') return <Undo2 className="w-4 h-4 text-orange-500" />
+    if (n.icon === 'RefreshCw') return <RefreshCw className="w-4 h-4 text-emerald-500" />
+    if (n.icon === 'CheckCircle') return <CheckCheck className="w-4 h-4 text-emerald-500" />
+    
+    switch (n.type) {
       case 'promotion': return <Sparkles className="w-4 h-4 text-purple-500" />
       case 'offer': return <Tag className="w-4 h-4 text-pink-500" />
       case 'order': return <Package className="w-4 h-4 text-blue-500" />
+      case 'payment': return <CheckCheck className="w-4 h-4 text-emerald-500" />
       case 'wishlist': return <Heart className="w-4 h-4 text-red-500" />
       case 'new_arrival': return <Megaphone className="w-4 h-4 text-amber-500" />
+      case 'system': return <Info className="w-4 h-4 text-blue-400" />
       default: return <Info className="w-4 h-4 text-slate-500" />
     }
   }
 
   const getLinkForType = (n: NotificationData) => {
+    if (n.href) return n.href;
     switch (n.type) {
       case 'order': return `/account/orders/${n.related_id || ''}`
       case 'wishlist': return `/wishlist`
@@ -85,9 +156,9 @@ export function NotificationDropdown({ initialNotifications = [], initialUnreadC
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900"
+              className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm ring-2 ring-white dark:ring-[#0a0514]"
             >
-              <span className="text-[9px] font-bold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>
+              <span className="text-[10px] font-bold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -128,7 +199,7 @@ export function NotificationDropdown({ initialNotifications = [], initialUnreadC
                     className={`group relative flex gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors ${!n.is_read ? 'bg-indigo-50/50 dark:bg-indigo-950/20' : ''}`}
                   >
                     <div className="mt-1 shrink-0 p-2 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700">
-                      {getIconForType(n.type)}
+                      {getIconForType(n)}
                     </div>
                     
                     <div className="flex-1 min-w-0 pr-8">

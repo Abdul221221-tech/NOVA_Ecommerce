@@ -28,6 +28,8 @@ export type ProductPayload = {
   is_new_arrival?: boolean
   is_coming_soon?: boolean
   experience_story?: string | null
+  return_window_days?: number
+  is_returnable?: boolean
   variants: {
     id?: string
     sku: string
@@ -61,6 +63,8 @@ export async function upsertProduct(payload: ProductPayload) {
     is_new_arrival: payload.is_new_arrival ?? false,
     is_coming_soon: payload.is_coming_soon ?? false,
     experience_story: payload.experience_story || null,
+    return_window_days: payload.return_window_days ?? 7,
+    is_returnable: payload.is_returnable ?? true,
     approval_status: 'approved',
     updated_at: new Date().toISOString()
   }

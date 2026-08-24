@@ -40,6 +40,27 @@ export async function updateOrderFulfillment(orderId: string, status: string, tr
   const { error } = await supabase.from('orders').update(updateData).eq('id', orderId)
   
   if (error) throw new Error(error.message)
+  
+  // Notify the other party
+  try {
+    const { createNotification } = await import('@/app/actions/notifications');
+    const recipientId = isSeller ? order.customer_id : user.id; // Customer receives fulfillment updates, Admin/Seller receives dispute
+    const verb = status === 'shipped' ? 'shipped' : status === 'delivered' ? 'delivered' : status;
+    
+    // Do not notify self
+    if (recipientId !== user.id) {
+       await createNotification(recipientId, {
+         title: `Order ${verb.charAt(0).toUpperCase() + verb.slice(1)}`,
+         message: `Your order status has been updated to: ${verb}. ${trackingNumber ? `Tracking: ${trackingNumber}` : ''}`,
+         type: 'order',
+         related_id: orderId,
+         icon: 'Package',
+         href: `/account/orders/${orderId}` // Link specifically for customer
+       });
+    }
+  } catch (err) {
+    console.error('Failed to notify order status change', err);
+  }
 
   revalidatePath(`/account/orders/${orderId}`)
   revalidatePath(`/seller/orders/${orderId}`)

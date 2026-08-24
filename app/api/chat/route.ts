@@ -33,9 +33,9 @@ Your persona should feel premium, matching the brand (Apple + premium fashion ma
           const supabase = await createClient()
           const { data, error } = await supabase
             .from('products')
-            .select('id, name, description, status')
+            .select('id, title, description, status')
             .eq('status', 'active')
-            .ilike('name', `%${query}%`)
+            .ilike('title', `%${query}%`)
             .limit(5)
           
           if (error) {

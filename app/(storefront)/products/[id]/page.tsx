@@ -13,6 +13,8 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import { WishlistButton } from '@/components/storefront/WishlistButton'
 import { ProductGallery } from '@/components/storefront/ProductGallery'
 import { ExperienceStoryModal } from '@/components/storefront/ExperienceStoryModal'
+import { ProductCarousel } from '@/components/storefront/ProductCarousel'
+import { RecentlyViewedCarousel } from '@/components/storefront/RecentlyViewedCarousel'
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient()
@@ -23,6 +25,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .select(`
       *,
       stores!inner ( name, slug, status ),
+      categories ( id, name, slug ),
       product_images ( url, sort_order ),
       product_variants ( id, sku, size, color, price_override, stock_quantity )
     `)
@@ -121,11 +124,93 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
         </div>
       </div>
+    </div>
 
-      {/* Semantic Vector Recommendations */}
-      <YouMightAlsoLike productId={product.id} />
+    <div className="w-full bg-muted/10 py-16 mt-16 border-t">
+      <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12 flex flex-col gap-16">
+        {/* Semantic Vector Recommendations */}
+        <YouMightAlsoLike productId={product.id} />
+        
+        {/* Related Products (Same Category) */}
+        <RelatedProducts 
+          categoryIds={Array.isArray(product.categories) ? product.categories.map((c: any) => c.id) : (product.categories ? [(product.categories as any).id] : [])} 
+          currentProductId={product.id} 
+        />
 
+        {/* More from This Store */}
+        <MoreFromStore storeId={product.stores.slug} currentProductId={product.id} />
+
+        {/* Recently Viewed */}
+        <RecentlyViewedCarousel currentProductId={product.id} />
+      </div>
     </div>
     </>
+  )
+}
+
+async function RelatedProducts({ categoryIds, currentProductId }: { categoryIds: string[], currentProductId: string }) {
+  if (!categoryIds || categoryIds.length === 0) return null
+  
+  const supabase = await createClient()
+  
+  // Note: the category_id is stored on products directly in some places or through junction tables,
+  // but looking at page.tsx we can query using inner join on categories.
+  // Actually, wait, let's query products where category_id is in categoryIds or using junction.
+  // Since we don't know the exact junction syntax, let's use the categories!inner syntax.
+  const { data: related } = await supabase
+    .from('products')
+    .select(`
+      id, title, price, compare_at_price, description, brand,
+      categories!inner ( id, name, slug ),
+      stores!inner ( name, slug, status, promotions ( code, discount_type, value, is_active, starts_at, expires_at ) ),
+      product_images ( url, sort_order ),
+      reviews ( rating ),
+      product_variants ( id, size, color )
+    `)
+    .eq('status', 'active')
+    .eq('stores.status', 'approved')
+    .in('categories.id', categoryIds)
+    .neq('id', currentProductId)
+    .limit(10)
+
+  if (!related || related.length === 0) return null
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center gap-2 mb-8">
+        <h2 className="font-heading text-3xl font-bold">Related Products</h2>
+      </div>
+      <ProductCarousel products={related} />
+    </div>
+  )
+}
+
+async function MoreFromStore({ storeId, currentProductId }: { storeId: string, currentProductId: string }) {
+  const supabase = await createClient()
+  
+  const { data: storeProducts } = await supabase
+    .from('products')
+    .select(`
+      id, title, price, compare_at_price, description, brand,
+      categories!inner ( id, name, slug ),
+      stores!inner ( name, slug, status, promotions ( code, discount_type, value, is_active, starts_at, expires_at ) ),
+      product_images ( url, sort_order ),
+      reviews ( rating ),
+      product_variants ( id, size, color )
+    `)
+    .eq('status', 'active')
+    .eq('stores.slug', storeId)
+    .neq('id', currentProductId)
+    .limit(10)
+
+  if (!storeProducts || storeProducts.length === 0) return null
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center gap-2 mb-8">
+        <h2 className="font-heading text-3xl font-bold">More from This Store</h2>
+      </div>
+      <ProductCarousel products={storeProducts} />
+    </div>
   )
 }

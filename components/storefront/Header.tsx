@@ -6,7 +6,6 @@ import { useState, useEffect, useTransition } from 'react'
 import { toast } from 'sonner'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CommandBar } from '@/components/storefront/CommandBar'
-import { CartDropdown } from '@/components/storefront/CartDropdown'
 import { useStorefront } from '@/components/storefront/StorefrontProvider'
 import { ShoppingCart, Menu, User, ChevronDown, LogOut, LayoutDashboard, Store, Package, Heart, Settings, ArrowRight, Search } from 'lucide-react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
@@ -45,7 +44,6 @@ export function Header({
   initialUnreadCount?: number
 }) {
   const { cartItems, wishlistItems, clearUserLocalData } = useStorefront()
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
   const [showAllCategories, setShowAllCategories] = useState(false)
   const [showAllBrands, setShowAllBrands] = useState(false)
@@ -58,6 +56,8 @@ export function Header({
   const [selectedBrnds, setSelectedBrnds] = useState<string[]>([])
   const [isCatOpen, setIsCatOpen] = useState(false)
   const [isBrndOpen, setIsBrndOpen] = useState(false)
+  
+  const [megaMenuQuery, setMegaMenuQuery] = useState('')
   
   const [isPending, startTransition] = useTransition()
 
@@ -116,6 +116,7 @@ export function Header({
   const handleNavLeave = () => {
     setHoveredNav(null)
     setActiveMegaMenu(null)
+    setMegaMenuQuery('')
   }
 
   const sellerCentreLink = !user ? '/seller/login' : (role === 'seller' ? '/seller' : '/seller/signup')
@@ -132,7 +133,7 @@ export function Header({
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={`sticky top-0 z-50 w-full transition-all duration-500 flex justify-center ${isScrolled ? 'pt-2 pb-2' : 'pt-0 pb-0'}`}
     >
-      <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-white/20 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-2 sm:px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
+      <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-foreground/10 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-2 sm:px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
         <div className="flex items-center gap-1 sm:gap-4 md:gap-8 justify-between h-full">
           
           {/* Left: Mobile Menu & Logo */}
@@ -256,9 +257,9 @@ export function Header({
               </SheetContent>
             </Sheet>
 
-            <Link href="/" className="flex items-center space-x-1 sm:space-x-3 focus:outline-none group shrink-0 relative overflow-hidden px-2 py-1 -ml-2 rounded-xl">
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group shrink-0 relative px-2 py-1 -ml-2 rounded-xl">
               <motion.div 
-                className="relative w-8 h-8 sm:w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]0 sm:h-10 md:w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 md:h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] border border-white/10 transition-shadow duration-500 z-10"
+                className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] border border-foreground/10 transition-shadow duration-500 z-10 shrink-0"
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -266,9 +267,9 @@ export function Header({
                 <Image src="/logo.jpg" alt="NOVA Logo" fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
               </motion.div>
-              <div className="relative z-10 overflow-hidden pr-2">
+              <div className="relative z-10 overflow-visible pr-2">
                 <span 
-                  className="font-heading text-xl sm:text-2xl md:text-3xl font-black tracking-tighter inline-block relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground group-hover:from-fuchsia-500 group-hover:to-orange-400 group-hover:translate-x-1 transition-all duration-500 ease-out"
+                  className="font-heading text-xl sm:text-2xl md:text-3xl font-black tracking-tighter inline-block relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-orange-400 group-hover:translate-x-1 transition-all duration-500 ease-out"
                 >
                   NOVA
                 </span>
@@ -276,7 +277,7 @@ export function Header({
             </Link>
             
             {/* Desktop Primary Nav (Premium Pill Design) */}
-            <nav className="hidden md:flex items-center gap-1 ml-8 h-full relative" onMouseLeave={handleNavLeave}>
+            <nav className="hidden lg:flex items-center gap-2 ml-6 h-full relative" onMouseLeave={handleNavLeave}>
               {navLinks.map(link => {
                 const isActive = pathname === link.href;
                 const isHovered = hoveredNav === link.name;
@@ -284,14 +285,14 @@ export function Header({
                   <Link 
                     key={link.name} 
                     href={link.href} 
-                    className="relative px-5 py-2.5 h-auto flex items-center justify-center rounded-full group focus:outline-none"
+                    className="relative px-4 py-2 h-auto flex items-center justify-center rounded-full group focus:outline-none"
                     onMouseEnter={() => { setHoveredNav(link.name); setActiveMegaMenu(null); }}
                   >
-                    <span className={`relative z-10 text-[15px] font-semibold transition-colors duration-300 ${isActive || isHovered ? 'text-indigo-600' : 'text-foreground'}`}>
+                    <span className={`relative z-10 text-sm font-semibold transition-colors duration-300 ${isActive || isHovered ? 'text-foreground' : 'text-foreground/80'}`}>
                       {link.name}
                     </span>
                     {(isHovered || (isActive && hoveredNav === null)) && (
-                      <motion.div layoutId="nav-pill" className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-full" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
+                      <motion.div layoutId="nav-pill" className="absolute inset-0 bg-foreground/10 backdrop-blur-md rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-foreground/10" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
                     )}
                   </Link>
                 )
@@ -299,34 +300,34 @@ export function Header({
 
               {/* Categories Trigger */}
               <div 
-                className="relative px-5 py-2.5 h-auto cursor-pointer flex items-center gap-1.5 rounded-full group focus:outline-none"
+                className="relative px-4 py-2 h-auto cursor-pointer flex items-center gap-1.5 rounded-full group focus:outline-none"
                 onMouseEnter={() => { setHoveredNav('Categories'); setActiveMegaMenu('categories'); }}
               >
-                <span className={`relative z-10 text-[15px] font-semibold transition-colors duration-300 ${(hoveredNav === 'Categories' || (pathname.includes('category=') && hoveredNav === null)) ? 'text-indigo-600' : 'text-foreground'}`}>
+                <span className={`relative z-10 text-sm font-semibold transition-colors duration-300 ${(hoveredNav === 'Categories' || (pathname.includes('category=') && hoveredNav === null)) ? 'text-foreground' : 'text-foreground/80'}`}>
                   Categories
                 </span>
-                <motion.div animate={{ rotate: activeMegaMenu === 'categories' ? -180 : 0 }} transition={{ duration: 0.3 }} className={`relative z-10 transition-colors ${hoveredNav === 'Categories' ? 'text-indigo-600' : 'text-foreground'}`}>
-                  <ChevronDown className="w-4 h-4" />
+                <motion.div animate={{ rotate: activeMegaMenu === 'categories' ? -180 : 0 }} transition={{ duration: 0.3 }} className={`relative z-10 transition-colors ${hoveredNav === 'Categories' ? 'text-foreground' : 'text-foreground/80'}`}>
+                  <ChevronDown className="w-4 h-4 opacity-70" />
                 </motion.div>
                 {(hoveredNav === 'Categories' || (pathname.includes('category=') && hoveredNav === null)) && (
-                  <motion.div layoutId="nav-pill" className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-full" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
+                  <motion.div layoutId="nav-pill" className="absolute inset-0 bg-foreground/10 backdrop-blur-md rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-foreground/10" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
                 )}
               </div>
 
               {/* Brands Trigger */}
               {brands.length > 0 && (
                 <div 
-                  className="relative px-5 py-2.5 h-auto cursor-pointer flex items-center gap-1.5 rounded-full group focus:outline-none"
+                  className="relative px-4 py-2 h-auto cursor-pointer flex items-center gap-1.5 rounded-full group focus:outline-none"
                   onMouseEnter={() => { setHoveredNav('Brands'); setActiveMegaMenu('brands'); }}
                 >
-                  <span className={`relative z-10 text-[15px] font-semibold transition-colors duration-300 ${(hoveredNav === 'Brands' || (pathname.includes('brand=') && hoveredNav === null)) ? 'text-indigo-600' : 'text-foreground'}`}>
+                  <span className={`relative z-10 text-sm font-semibold transition-colors duration-300 ${(hoveredNav === 'Brands' || (pathname.includes('brand=') && hoveredNav === null)) ? 'text-foreground' : 'text-foreground/80'}`}>
                     Brands
                   </span>
-                  <motion.div animate={{ rotate: activeMegaMenu === 'brands' ? -180 : 0 }} transition={{ duration: 0.3 }} className={`relative z-10 transition-colors ${hoveredNav === 'Brands' ? 'text-indigo-600' : 'text-foreground'}`}>
-                    <ChevronDown className="w-4 h-4" />
+                  <motion.div animate={{ rotate: activeMegaMenu === 'brands' ? -180 : 0 }} transition={{ duration: 0.3 }} className={`relative z-10 transition-colors ${hoveredNav === 'Brands' ? 'text-foreground' : 'text-foreground/80'}`}>
+                    <ChevronDown className="w-4 h-4 opacity-70" />
                   </motion.div>
                   {(hoveredNav === 'Brands' || (pathname.includes('brand=') && hoveredNav === null)) && (
-                    <motion.div layoutId="nav-pill" className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-full" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
+                    <motion.div layoutId="nav-pill" className="absolute inset-0 bg-foreground/10 backdrop-blur-md rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-foreground/10" transition={{ type: "spring", stiffness: 500, damping: 35 }} />
                   )}
                 </div>
               )}
@@ -339,73 +340,112 @@ export function Header({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.98, transition: { duration: 0.15 } }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute top-full mt-4 left-0 w-[600px] bg-background/95 backdrop-blur-3xl border border-white/20 shadow-[0_20px_40px_rgb(0,0,0,0.1)] rounded-[2rem] overflow-hidden flex flex-col z-50 origin-top-left"
+                    className="absolute top-full mt-4 left-0 w-[460px] bg-background backdrop-blur-2xl border border-foreground/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] rounded-[1.5rem] overflow-hidden flex flex-col z-50 origin-top-left"
                     onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
                   >
-                    <div className="p-8 bg-gradient-to-b from-muted/30 to-transparent">
-                      <h3 className="text-2xl font-heading font-bold text-foreground">
-                        {activeMegaMenu === 'categories' ? 'Shop by Category' : 'Shop by Brand'}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">Select multiple items to filter your search</p>
+                    <div className="p-5 px-6 bg-gradient-to-b from-white/5 to-transparent border-b border-foreground/10 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-heading font-bold text-foreground">
+                          {activeMegaMenu === 'categories' ? 'Shop by Category' : 'Shop by Brand'}
+                        </h3>
+                      </div>
+                      <div className="relative w-full">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/" />
+                        <input
+                          type="text"
+                          autoFocus
+                          value={megaMenuQuery}
+                          onChange={(e) => setMegaMenuQuery(e.target.value)}
+                          placeholder={`Search ${activeMegaMenu === 'categories' ? 'categories' : 'brands'}...`}
+                          className="w-full bg-foreground/10 border border-foreground/10 rounded-xl pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-1 focus:ring-accent-primary focus:border-accent-primary transition-all"
+                        />
+                      </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-3 p-6 max-h-[400px] overflow-y-auto scrollbar-thin">
-                      {activeMegaMenu === 'categories' ? (
-                        categories.map(cat => {
-                          const isSelected = selectedCats.includes(cat.slug);
-                          return (
-                            <motion.div 
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              key={cat.slug} 
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCategory(cat.slug); }}
-                              className={`cursor-pointer rounded-2xl transition-all duration-200 p-4 flex items-center gap-4 border ${
-                                isSelected 
-                                  ? 'bg-accent-primary/10 border-accent-primary/30 shadow-inner' 
-                                  : 'bg-surface-base border-transparent hover:border-border hover:shadow-sm'
-                              }`}
-                            >
-                              <div className={`flex items-center justify-center size-8 rounded-full ${isSelected ? 'bg-accent-primary text-white' : 'bg-muted text-muted-foreground'}`}>
-                                <Package className="w-4 h-4" />
+                    {/* Filtered Grid with Scroll Fade Mask */}
+                    <div className="relative">
+                      <div 
+                        className="grid grid-cols-2 gap-2.5 p-4 px-6 max-h-[320px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30 scrollbar-track-transparent"
+                        style={{ maskImage: 'linear-gradient(to bottom, transparent, black 12px, black calc(100% - 12px), transparent)' }}
+                      >
+                        {activeMegaMenu === 'categories' ? (
+                          categories.filter(cat => cat.name.toLowerCase().includes(megaMenuQuery.toLowerCase())).length > 0 ? (
+                            categories.filter(cat => cat.name.toLowerCase().includes(megaMenuQuery.toLowerCase())).slice(0, 10).map(cat => {
+                              const isSelected = selectedCats.includes(cat.slug);
+                              return (
+                                <motion.div 
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  key={cat.slug} 
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCategory(cat.slug); }}
+                                  className={`cursor-pointer rounded-xl transition-all duration-200 p-2.5 flex items-center gap-3 border ${
+                                    isSelected 
+                                      ? 'bg-accent-primary/20 border-accent-primary/50 shadow-inner' 
+                                      : 'bg-foreground/10 border-foreground/10 hover:bg-foreground/10 hover:border-foreground/10 hover:shadow-sm'
+                                  }`}
+                                >
+                                  <div className={`flex items-center justify-center w-7 h-7 rounded-full shrink-0 ${isSelected ? 'bg-accent-primary text-background' : 'bg-foreground/10 text-foreground/'}`}>
+                                    <Package className="w-3.5 h-3.5" />
+                                  </div>
+                                  <span className={`font-semibold text-sm truncate ${isSelected ? 'text-foreground' : 'text-foreground/'}`}>{cat.name}</span>
+                                </motion.div>
+                              );
+                            })
+                          ) : (
+                            <div className="col-span-2 py-10 flex flex-col items-center justify-center text-center">
+                              <div className="w-12 h-12 rounded-full bg-foreground/10 flex items-center justify-center mb-3">
+                                <Search className="w-5 h-5 text-foreground/" />
                               </div>
-                              <span className={`font-semibold text-[15px] ${isSelected ? 'text-accent-primary' : 'text-foreground'}`}>{cat.name}</span>
-                            </motion.div>
-                          );
-                        })
-                      ) : (
-                        brands.map(brand => {
-                          const isSelected = selectedBrnds.includes(brand);
-                          return (
-                            <motion.div 
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              key={brand} 
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleBrand(brand); }}
-                              className={`cursor-pointer rounded-2xl transition-all duration-200 p-4 flex items-center gap-4 border ${
-                                isSelected 
-                                  ? 'bg-accent-primary/10 border-accent-primary/30 shadow-inner' 
-                                  : 'bg-surface-base border-transparent hover:border-border hover:shadow-sm'
-                              }`}
-                            >
-                              <div className={`flex items-center justify-center size-8 rounded-full ${isSelected ? 'bg-accent-primary text-white' : 'bg-muted text-muted-foreground'}`}>
-                                <Store className="w-4 h-4" />
+                              <p className="text-sm font-semibold text-foreground/">No categories found</p>
+                              <p className="text-xs text-foreground/40 mt-1 max-w-[250px]">We couldn't find anything matching your search. Try another keyword!</p>
+                            </div>
+                          )
+                        ) : (
+                          brands.filter(b => b.toLowerCase().includes(megaMenuQuery.toLowerCase())).length > 0 ? (
+                            brands.filter(b => b.toLowerCase().includes(megaMenuQuery.toLowerCase())).slice(0, 10).map(brand => {
+                              const isSelected = selectedBrnds.includes(brand);
+                              return (
+                                <motion.div 
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  key={brand} 
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleBrand(brand); }}
+                                  className={`cursor-pointer rounded-xl transition-all duration-200 p-2.5 flex items-center gap-3 border ${
+                                    isSelected 
+                                      ? 'bg-accent-primary/20 border-accent-primary/50 shadow-inner' 
+                                      : 'bg-foreground/10 border-foreground/10 hover:bg-foreground/10 hover:border-foreground/10 hover:shadow-sm'
+                                  }`}
+                                >
+                                  <div className={`flex items-center justify-center w-7 h-7 rounded-full shrink-0 ${isSelected ? 'bg-accent-primary text-background' : 'bg-foreground/10 text-foreground/'}`}>
+                                    <Store className="w-3.5 h-3.5" />
+                                  </div>
+                                  <span className={`font-semibold text-sm truncate ${isSelected ? 'text-foreground' : 'text-foreground/'}`}>{brand}</span>
+                                </motion.div>
+                              );
+                            })
+                          ) : (
+                            <div className="col-span-2 py-10 flex flex-col items-center justify-center text-center">
+                              <div className="w-12 h-12 rounded-full bg-foreground/10 flex items-center justify-center mb-3">
+                                <Search className="w-5 h-5 text-foreground/" />
                               </div>
-                              <span className={`font-semibold text-[15px] ${isSelected ? 'text-accent-primary' : 'text-foreground'}`}>{brand}</span>
-                            </motion.div>
-                          );
-                        })
-                      )}
+                              <p className="text-sm font-semibold text-foreground/">No brands found</p>
+                              <p className="text-xs text-foreground/40 mt-1 max-w-[250px]">We couldn't find anything matching your search. Try another keyword!</p>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                     
-                    <div className="p-6 border-t bg-muted/10 flex justify-between items-center backdrop-blur-md">
-                      <span className="text-sm font-semibold text-muted-foreground">
+                    <div className="p-4 px-6 border-t border-foreground/10 bg-foreground/10 flex justify-between items-center backdrop-blur-md">
+                      <span className="text-sm font-semibold text-foreground/">
                         {(activeMegaMenu === 'categories' ? selectedCats : selectedBrnds).length} items selected
                       </span>
                       <Button 
                         onClick={() => { applyNavigation(); setActiveMegaMenu(null); }} 
-                        className="rounded-full shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]g shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]ccent-primary/20 bg-accent-primary hover:bg-accent-primary/90 text-white font-bold transition-all hover:scale-105 active:scale-95 px-6"
+                        size="sm"
+                        className="rounded-full shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-white hover:bg-gray-200 text-black font-bold transition-all hover:scale-105 active:scale-95 px-5 h-9"
                       >
-                        View Collection <ArrowRight className="w-4 h-4 ml-2" />
+                        View Collection <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                       </Button>
                     </div>
                   </motion.div>
@@ -415,27 +455,27 @@ export function Header({
           </div>
 
           {/* Center: CommandBar (Search) */}
-          <div className="hidden lg:flex flex-1 max-w-xl mx-8 relative z-20">
+          <div className="hidden lg:flex flex-1 max-w-xl mx-4 relative z-20">
             <CommandBar />
           </div>
 
         {/* Right: Cart, Seller Centre, Auth */}
-        <div className="flex items-center gap-1.5 sm:gap-3 md:gap-5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 shrink-0">
           
           {/* Mobile Search Toggle */}
           <button 
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-            className="lg:hidden relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex"
+            className="lg:hidden relative p-2 hover:bg-foreground/10 dark:hover:bg-foreground/10 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group inline-flex"
             aria-label="Search"
           >
-             <Search className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
+             <Search className="w-5 h-5 text-foreground group-hover:text-indigo-400 transition-colors" />
           </button>
 
           <TooltipProvider delay={0}>
             <Tooltip>
               <TooltipTrigger>
-                <Link href={sellerCentreLink} className="inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
-                  <Store className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
+                <Link href={sellerCentreLink} className="inline-flex relative p-2 hover:bg-foreground/10 dark:hover:bg-foreground/10 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
+                  <Store className="w-5 h-5 text-foreground group-hover:text-indigo-400 transition-colors" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
@@ -445,15 +485,15 @@ export function Header({
 
             <Tooltip>
               <TooltipTrigger>
-                <Link href="/wishlist" className="hidden md:inline-flex relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
-                  <Heart className={`w-5 h-5 transition-colors duration-300 ${wishlistItems?.length > 0 ? 'fill-indigo-600 text-indigo-600' : 'text-foreground group-hover:text-indigo-600'}`} />
+                <Link href="/wishlist" className="hidden md:inline-flex relative p-2 hover:bg-foreground/10 dark:hover:bg-foreground/10 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group">
+                  <Heart className={`w-5 h-5 transition-colors duration-300 ${wishlistItems?.length > 0 ? 'fill-indigo-500 text-indigo-500' : 'text-foreground group-hover:text-indigo-400'}`} />
                   {wishlistItems?.length > 0 && (
                     <motion.span 
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute top-1 right-1 w-4 h-4 bg-accent-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border border-background shadow-sm"
+                      className="absolute top-0.5 right-0 w-[18px] h-[18px] bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm ring-2 ring-background dark:ring-background"
                     >
-                      {wishlistItems.length}
+                      {wishlistItems.length > 9 ? '9+' : wishlistItems.length}
                     </motion.span>
                   )}
                 </Link>
@@ -472,38 +512,31 @@ export function Header({
           )}
 
           <div className="relative hidden md:block">
-            <button 
-              onClick={() => {
-                if (!user) {
-                  router.push('/signup?redirect=/cart')
-                } else {
-                  setIsCartOpen(!isCartOpen)
-                }
-              }}
-              className="relative p-1.5 sm:p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
+            <Link 
+              href="/cart"
+              className="relative inline-flex p-2 hover:bg-foreground/10 dark:hover:bg-foreground/10 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 group"
               aria-label="View Cart"
             >
-              <ShoppingCart className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
+              <ShoppingCart className="w-5 h-5 text-foreground group-hover:text-indigo-400 transition-colors" />
               {cartItems.length > 0 && (
                 <motion.span 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-1 right-1 w-4 h-4 bg-accent-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border border-background shadow-sm"
+                  className="absolute top-0.5 right-0 w-[18px] h-[18px] bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm ring-2 ring-background dark:ring-background"
                 >
-                  {cartItems.length}
+                  {cartItems.length > 9 ? '9+' : cartItems.length}
                 </motion.span>
               )}
-            </button>
-            <CartDropdown isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+            </Link>
           </div>
 
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="rounded-full bg-slate-100 dark:bg-slate-800 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 h-12 border border-border/50 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none group overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+              <DropdownMenuTrigger className="rounded-full bg-foreground/10 w-10 h-10 sm:w-11 sm:h-11 border border-foreground/10 flex items-center justify-center hover:bg-foreground/10 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none group overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.2)] ml-2">
                   {profile?.profile_photo_url ? (
                     <img src={profile.profile_photo_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <User className="w-5 h-5 text-foreground group-hover:text-indigo-600 transition-colors" />
+                    <User className="w-5 h-5 text-foreground group-hover:text-indigo-400 transition-colors" />
                   )}
               </DropdownMenuTrigger>
               <DropdownMenuContent 
@@ -518,10 +551,10 @@ export function Header({
                   <div className="absolute -top-[9px] right-[22px] w-6 h-6 bg-gradient-to-br from-pink-500 to-purple-600 rotate-45 rounded-tl-md z-0 shadow-[0_0_20px_rgba(236,72,153,0.4)] pointer-events-none"></div>
                   
                   {/* Inner dark container */}
-                  <div className="relative z-10 w-full h-full bg-[#0a0514]/95 rounded-[23px] flex flex-col p-2 overflow-hidden">
+                  <div className="relative z-10 w-full h-full bg-background/95 rounded-[23px] flex flex-col p-2 overflow-hidden">
                     
                     {/* Inner notch filler to make it seamless */}
-                    <div className="absolute -top-[9px] right-[23px] w-[22px] h-[22px] bg-[#0a0514]/95 rotate-45 rounded-tl-sm z-20 pointer-events-none backdrop-blur-3xl"></div>
+                    <div className="absolute -top-[9px] right-[23px] w-[22px] h-[22px] bg-background/95 rotate-45 rounded-tl-sm z-20 pointer-events-none backdrop-blur-3xl"></div>
 
                     {/* Subtle mesh/particle background effect (Top Right) */}
                     <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-pink-500/20 via-purple-500/5 to-transparent pointer-events-none z-0"></div>
@@ -529,18 +562,18 @@ export function Header({
                     {/* Profile Header section */}
                     <DropdownMenuGroup className="relative z-30 mb-2">
                       <DropdownMenuLabel className="p-3 flex items-center gap-4">
-                        <div className="relative w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]2 h-12 rounded-full p-[2px] bg-gradient-to-br from-orange-400 to-purple-600 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                          <div className="w-full h-full rounded-full bg-[#130922] flex items-center justify-center overflow-hidden">
+                        <div className="relative w-12 h-12 rounded-full p-[2px] bg-gradient-to-br from-orange-400 to-purple-600 shadow-[0_0_15px_rgba(245,158,11,0.3)] shrink-0">
+                          <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden">
                              {profile?.profile_photo_url ? (
                                 <img src={profile.profile_photo_url} alt="Profile" className="w-full h-full object-cover" />
                               ) : (
-                                <User className="w-6 h-6 text-white/80" />
+                                <User className="w-6 h-6 text-foreground/" />
                               )}
                           </div>
                         </div>
                         <div className="flex flex-col overflow-hidden">
-                          <p className="text-[15px] font-bold text-white tracking-wide truncate">{user.user_metadata?.name || 'Customer Account'}</p>
-                          <p className="text-xs text-white/50 truncate font-medium mt-0.5">{user.email}</p>
+                          <p className="text-[15px] font-bold text-foreground tracking-wide truncate">{user.user_metadata?.name || 'Customer Account'}</p>
+                          <p className="text-xs text-foreground/40 truncate font-medium mt-0.5">{user.email}</p>
                         </div>
                       </DropdownMenuLabel>
                     </DropdownMenuGroup>
@@ -554,10 +587,10 @@ export function Header({
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-orange-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
                           
                           <div className="flex items-center gap-3">
-                            <User className="w-4 h-4 !text-white/60 group-hover:!text-orange-400 group-data-[highlighted]/menuitem:!text-orange-400 transition-colors drop-shadow-[0_0_5px_rgba(245,158,11,0)] group-hover:drop-shadow-[0_0_5px_rgba(245,158,11,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]" />
-                            <span className="!text-white/80 group-hover:!text-white group-data-[highlighted]/menuitem:!text-white transition-colors text-[14px] font-medium tracking-wide">My Profile</span>
+                            <User className="w-4 h-4 !text-foreground/60 group-hover:!text-orange-400 group-data-[highlighted]/menuitem:!text-orange-400 transition-colors drop-shadow-[0_0_5px_rgba(245,158,11,0)] group-hover:drop-shadow-[0_0_5px_rgba(245,158,11,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]" />
+                            <span className="!text-foreground/80 group-hover:!text-foreground group-data-[highlighted]/menuitem:!text-foreground transition-colors text-[14px] font-medium tracking-wide">My Profile</span>
                           </div>
-                          <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-white/60 group-data-[highlighted]/menuitem:!text-white/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                          <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-foreground/60 group-data-[highlighted]/menuitem:!text-foreground/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                         </Link>
                       </DropdownMenuItem>
 
@@ -567,10 +600,10 @@ export function Header({
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-purple-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
                           
                           <div className="flex items-center gap-3">
-                            <Package className="w-4 h-4 !text-white/60 group-hover:!text-purple-400 group-data-[highlighted]/menuitem:!text-purple-400 transition-colors drop-shadow-[0_0_5px_rgba(168,85,247,0)] group-hover:drop-shadow-[0_0_5px_rgba(168,85,247,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]" />
-                            <span className="!text-white/80 group-hover:!text-white group-data-[highlighted]/menuitem:!text-white transition-colors text-[14px] font-medium tracking-wide">Orders</span>
+                            <Package className="w-4 h-4 !text-foreground/60 group-hover:!text-purple-400 group-data-[highlighted]/menuitem:!text-purple-400 transition-colors drop-shadow-[0_0_5px_rgba(168,85,247,0)] group-hover:drop-shadow-[0_0_5px_rgba(168,85,247,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]" />
+                            <span className="!text-foreground/80 group-hover:!text-foreground group-data-[highlighted]/menuitem:!text-foreground transition-colors text-[14px] font-medium tracking-wide">Orders</span>
                           </div>
-                          <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-white/60 group-data-[highlighted]/menuitem:!text-white/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                          <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-foreground/60 group-data-[highlighted]/menuitem:!text-foreground/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                         </Link>
                       </DropdownMenuItem>
 
@@ -580,10 +613,10 @@ export function Header({
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-pink-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(236,72,153,0.8)]" />
                           
                           <div className="flex items-center gap-3">
-                            <Heart className="w-4 h-4 !text-white/60 group-hover:!text-pink-400 group-data-[highlighted]/menuitem:!text-pink-400 transition-colors drop-shadow-[0_0_5px_rgba(236,72,153,0)] group-hover:drop-shadow-[0_0_5px_rgba(236,72,153,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(236,72,153,0.5)]" />
-                            <span className="!text-white/80 group-hover:!text-white group-data-[highlighted]/menuitem:!text-white transition-colors text-[14px] font-medium tracking-wide">Wishlist</span>
+                            <Heart className="w-4 h-4 !text-foreground/60 group-hover:!text-pink-400 group-data-[highlighted]/menuitem:!text-pink-400 transition-colors drop-shadow-[0_0_5px_rgba(236,72,153,0)] group-hover:drop-shadow-[0_0_5px_rgba(236,72,153,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(236,72,153,0.5)]" />
+                            <span className="!text-foreground/80 group-hover:!text-foreground group-data-[highlighted]/menuitem:!text-foreground transition-colors text-[14px] font-medium tracking-wide">Wishlist</span>
                           </div>
-                          <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-white/60 group-data-[highlighted]/menuitem:!text-white/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                          <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-foreground/60 group-data-[highlighted]/menuitem:!text-foreground/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                         </Link>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -598,10 +631,10 @@ export function Header({
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-blue-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                             
                             <div className="flex items-center gap-3">
-                              <LayoutDashboard className="w-4 h-4 !text-white/60 group-hover:!text-blue-400 group-data-[highlighted]/menuitem:!text-blue-400 transition-colors drop-shadow-[0_0_5px_rgba(59,130,246,0)] group-hover:drop-shadow-[0_0_5px_rgba(59,130,246,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]" />
-                              <span className="!text-white/80 group-hover:!text-white group-data-[highlighted]/menuitem:!text-white transition-colors text-[14px] font-medium tracking-wide">Dashboard</span>
+                              <LayoutDashboard className="w-4 h-4 !text-foreground/60 group-hover:!text-blue-400 group-data-[highlighted]/menuitem:!text-blue-400 transition-colors drop-shadow-[0_0_5px_rgba(59,130,246,0)] group-hover:drop-shadow-[0_0_5px_rgba(59,130,246,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]" />
+                              <span className="!text-foreground/80 group-hover:!text-foreground group-data-[highlighted]/menuitem:!text-foreground transition-colors text-[14px] font-medium tracking-wide">Dashboard</span>
                             </div>
-                            <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-white/60 group-data-[highlighted]/menuitem:!text-white/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                            <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-foreground/60 group-data-[highlighted]/menuitem:!text-foreground/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                           </Link>
                         </DropdownMenuItem>
                       )}
@@ -612,10 +645,10 @@ export function Header({
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-indigo-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(99,102,241,0.8)]" />
                           
                           <div className="flex items-center gap-3">
-                            <Settings className="w-4 h-4 !text-white/60 group-hover:!text-indigo-400 group-data-[highlighted]/menuitem:!text-indigo-400 transition-colors drop-shadow-[0_0_5px_rgba(99,102,241,0)] group-hover:drop-shadow-[0_0_5px_rgba(99,102,241,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(99,102,241,0.5)]" />
-                            <span className="!text-white/80 group-hover:!text-white group-data-[highlighted]/menuitem:!text-white transition-colors text-[14px] font-medium tracking-wide">Settings</span>
+                            <Settings className="w-4 h-4 !text-foreground/60 group-hover:!text-indigo-400 group-data-[highlighted]/menuitem:!text-indigo-400 transition-colors drop-shadow-[0_0_5px_rgba(99,102,241,0)] group-hover:drop-shadow-[0_0_5px_rgba(99,102,241,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(99,102,241,0.5)]" />
+                            <span className="!text-foreground/80 group-hover:!text-foreground group-data-[highlighted]/menuitem:!text-foreground transition-colors text-[14px] font-medium tracking-wide">Settings</span>
                           </div>
-                          <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-white/60 group-data-[highlighted]/menuitem:!text-white/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                          <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-foreground/60 group-data-[highlighted]/menuitem:!text-foreground/60 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                         </Link>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -633,13 +666,13 @@ export function Header({
                               {isPending ? (
                                 <div className="w-4 h-4 border-2 border-rose-400 border-t-transparent rounded-full animate-spin drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
                               ) : (
-                                <LogOut className="w-4 h-4 !text-white/60 group-hover:!text-red-400 group-data-[highlighted]/menuitem:!text-red-400 transition-colors drop-shadow-[0_0_5px_rgba(239,68,68,0)] group-hover:drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
+                                <LogOut className="w-4 h-4 !text-foreground/60 group-hover:!text-red-400 group-data-[highlighted]/menuitem:!text-red-400 transition-colors drop-shadow-[0_0_5px_rgba(239,68,68,0)] group-hover:drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] group-data-[highlighted]/menuitem:drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
                               )}
                               <span className="!text-rose-400/90 group-hover:!text-rose-400 group-data-[highlighted]/menuitem:!text-rose-400 transition-colors text-[14px] font-medium tracking-wide">
                                 {isPending ? 'Logging out...' : 'Log out'}
                               </span>
                             </div>
-                            <ChevronDown className="w-4 h-4 !text-white/20 group-hover:!text-rose-400/80 group-data-[highlighted]/menuitem:!text-rose-400/80 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
+                            <ChevronDown className="w-4 h-4 !text-foreground/20 group-hover:!text-rose-400/80 group-data-[highlighted]/menuitem:!text-rose-400/80 group-hover:translate-x-1 group-data-[highlighted]/menuitem:translate-x-1 transition-all -rotate-90" />
                           </button>
                         </DropdownMenuItem>
                       </form>
@@ -661,7 +694,7 @@ export function Header({
               >
                 Sign In
                 <div className={`absolute -bottom-1.5 left-0 h-[2px] rounded-full bg-foreground transition-all duration-300 ease-out ${
-                  pathname === '/login' ? 'w-full' : 'w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] group-hover:w-full'
+                  pathname === '/login' ? 'w-full' : 'w-[calc(100%-1rem)] group-hover:w-full'
                 }`} />
               </Link>
               
@@ -673,7 +706,7 @@ export function Header({
     className={`hidden md:flex group relative items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full border transition-all duration-300 ease-out overflow-hidden hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
       pathname === '/signup' 
         ? 'border-indigo-500/30 bg-indigo-50/50 shadow-[0_2px_12px_rgba(99,102,241,0.15)] dark:border-indigo-400/30 dark:bg-indigo-500/10' 
-        : 'border-border/80 bg-background shadow-sm hover:shadow-[calc(100%-1rem)] sm:w-[calc(100%-2rem)]d hover:border-border hover:bg-muted/50'
+        : 'border-border/80 bg-background shadow-sm hover:shadow-md hover:border-border hover:bg-muted/50'
     }`}
   >
     {/* Subtle animated hover glow */}

@@ -205,7 +205,7 @@ export default function VariantSelector({ variants, sizes, colors, basePrice }: 
           <button
             onClick={handleAddToCart}
             disabled={isAdding}
-            className={`w-full h-14 text-lg font-bold flex items-center justify-center rounded-2xl shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent-primary ${isAdding ? 'bg-accent-primary/80 text-white scale-[0.98]' : 'bg-foreground text-background hover:bg-accent-primary hover:text-white hover:-translate-y-1 hover:shadow-accent-primary/20 hover:shadow-2xl active:scale-95'}`}
+            className={`w-full h-14 text-lg font-bold flex items-center justify-center rounded-2xl shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent-primary ${isAdding ? 'bg-accent-primary/80 text-background scale-[0.98]' : 'bg-foreground text-background hover:bg-accent-primary hover:text-background hover:-translate-y-1 hover:shadow-accent-primary/20 hover:shadow-2xl active:scale-95'}`}
           >
             <AnimatePresence mode="wait">
               {isAdding ? (

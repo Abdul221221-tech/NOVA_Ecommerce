@@ -220,12 +220,12 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                 </Badge>
               )}
               {isNew && !isOutOfStock && !promoBadge && (
-                <Badge className="bg-accent-primary/90 text-white backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
+                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
                   NEW
                 </Badge>
               )}
               {promoBadge && (
-                <Badge className="bg-accent-primary/90 text-white backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
+                <Badge className="bg-accent-primary/90 text-background backdrop-blur-md border-none font-bold tracking-wide animate-pulse">
                   {promoBadge}
                 </Badge>
               )}
@@ -247,7 +247,7 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                   title={isCompared ? "In Comparison" : "Add to Compare"}
                   className={`flex items-center justify-center w-[32px] h-[32px] rounded-full shadow-sm backdrop-blur-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
                     isCompared 
-                      ? 'bg-accent-primary text-white scale-105' 
+                      ? 'bg-accent-primary text-background scale-105' 
                       : 'bg-background/90 text-muted-foreground hover:bg-white dark:hover:bg-muted-foreground hover:text-foreground hover:scale-110'
                   }`}
                 >
@@ -328,8 +328,8 @@ export function ProductCard({ product, promoBadge }: ProductCardProps) {
                 className={`relative overflow-hidden flex items-center justify-center w-10 h-10 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary shadow-sm ${
                   isOutOfStock ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' :
                   isAdded ? 'bg-emerald-500 text-white' :
-                  isAdding ? 'bg-accent-primary/80 text-white' :
-                  'bg-foreground text-background hover:bg-accent-primary dark:hover:bg-accent-primary hover:text-white hover:scale-105'
+                  isAdding ? 'bg-accent-primary/80 text-background' :
+                  'bg-foreground text-background hover:bg-accent-primary dark:hover:bg-accent-primary hover:text-background hover:scale-105'
                 }`}
               >
                 <AnimatePresence mode="wait">

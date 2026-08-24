@@ -25,7 +25,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative overflow-hidden bg-[#0c0c0e] text-slate-300 py-10 md:py-24 mt-auto border-t border-white/5">
+    <footer className="relative overflow-hidden bg-[#0c0c0e] text-slate-300 py-10 md:py-24 mt-auto border-t border-foreground/">
       
       {/* 1. Ambient Background Detail */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -57,7 +57,7 @@ export function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <Link href="/" className="inline-flex items-center gap-3 group focus:outline-none relative overflow-hidden p-2 -ml-2 rounded-2xl">
               <motion.div 
-                className="relative w-12 h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_25px_rgba(217,70,239,0.4)] border border-white/10 transition-shadow duration-500 z-10"
+                className="relative w-12 h-12 overflow-hidden rounded-full shadow-[0_0_0_rgba(217,70,239,0)] group-hover:shadow-[0_0_25px_rgba(217,70,239,0.4)] border border-foreground/ transition-shadow duration-500 z-10"
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -96,7 +96,7 @@ export function Footer() {
                   href: 'https://youtube.com/@abdulwaheed-l7v3y?si=Dm9WaG9-duj16ZHj' 
                 }
               ].map((social, i) => (
-                <Link key={i} href={social.href} target={social.href !== '#' ? "_blank" : undefined} rel={social.href !== '#' ? "noopener noreferrer" : undefined} className="group relative w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-transparent transition-all duration-200 ease-out hover:bg-amber-500 hover:border-amber-500 hover:scale-110 hover:rotate-6">
+                <Link key={i} href={social.href} target={social.href !== '#' ? "_blank" : undefined} rel={social.href !== '#' ? "noopener noreferrer" : undefined} className="group relative w-10 h-10 flex items-center justify-center rounded-full border border-foreground/ bg-transparent transition-all duration-200 ease-out hover:bg-amber-500 hover:border-amber-500 hover:scale-110 hover:rotate-6">
                   <social.icon className="w-4 h-4 text-slate-400 group-hover:text-slate-950 transition-colors duration-200 ease-out" />
                 </Link>
               ))}
@@ -106,7 +106,7 @@ export function Footer() {
           {/* Shop Column */}
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-3">
-              <h4 className="font-bold text-sm tracking-[0.15em] text-white uppercase">Shop</h4>
+              <h4 className="font-bold text-sm tracking-[0.15em] text-foreground uppercase">Shop</h4>
               <div className="w-6 h-1 bg-amber-500 rounded-full" />
             </div>
             <ul className="space-y-4 text-sm text-slate-400">
@@ -129,7 +129,7 @@ export function Footer() {
           {/* Support Column */}
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-3">
-              <h4 className="font-bold text-sm tracking-[0.15em] text-white uppercase">Support</h4>
+              <h4 className="font-bold text-sm tracking-[0.15em] text-foreground uppercase">Support</h4>
               <div className="w-6 h-1 bg-amber-500 rounded-full" />
             </div>
             <ul className="space-y-4 text-sm text-slate-400">
@@ -153,7 +153,7 @@ export function Footer() {
           {/* Newsletter Column */}
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-3">
-              <h4 className="font-bold text-sm tracking-[0.15em] text-white uppercase">Newsletter</h4>
+              <h4 className="font-bold text-sm tracking-[0.15em] text-foreground uppercase">Newsletter</h4>
               <div className="w-6 h-1 bg-amber-500 rounded-full" />
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -170,8 +170,8 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
           <p>© {new Date().getFullYear()} NOVA Marketplace. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors duration-200 py-2">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors duration-200 py-2">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors duration-200 py-2">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors duration-200 py-2">Terms of Service</Link>
           </div>
         </div>
       </div>

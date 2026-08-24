@@ -22,6 +22,8 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
 import { SidebarClient } from '@/components/seller/SidebarClient'
+import { NotificationDropdown } from '@/components/storefront/NotificationDropdown'
+import { fetchNotifications } from '@/app/actions/notifications'
 
 export default async function SellerLayout({
   children,
@@ -42,6 +44,7 @@ export default async function SellerLayout({
   }
 
   const storeName = store.name
+  const notificationsData = await fetchNotifications()
 
   return (
     <div className="flex min-h-screen bg-surface-base">
@@ -65,10 +68,10 @@ export default async function SellerLayout({
              <h1 className="text-lg md:text-xl font-semibold hidden sm:block">Seller Centre</h1>
            </div>
            <div className="flex items-center gap-4">
-             <Button variant="ghost" size="icon" className="relative text-muted-foreground">
-               <Bell className="w-5 h-5" />
-               <span className="absolute top-2 right-2 w-2 h-2 bg-accent-primary rounded-full"></span>
-             </Button>
+             {/* Desktop: Render NotificationDropdown inside Client component or directly if we fetch here */}
+             <div className="relative text-muted-foreground">
+               <NotificationDropdown initialNotifications={notificationsData.notifications} initialUnreadCount={notificationsData.unreadCount} />
+             </div>
            </div>
         </header>
         <div className="flex-1 overflow-y-auto">
