@@ -52,16 +52,16 @@ export function CategoryScroller({ categories }: { categories: CategoryWithImage
       {/* Scrollable Container */}
       <div 
         ref={scrollRef}
-        className="grid grid-cols-3 min-[400px]:grid-cols-4 sm:flex sm:overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 px-1 sm:snap-x sm:snap-mandatory scrollbar-hide justify-items-center"
+        className="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 px-1 snap-x snap-mandatory scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {categories.map((cat) => (
           <Link 
             key={cat.id} 
             href={`/categories/${cat.slug}`} 
-            className="flex flex-col items-center gap-2 sm:gap-4 sm:snap-start shrink-0 group/item w-full sm:w-32 md:w-40"
+            className="flex flex-col items-center gap-2 sm:gap-4 snap-start shrink-0 group/item w-[28vw] sm:w-32 md:w-40"
           >
-            <div className="relative w-16 h-16 min-[400px]:w-20 min-[400px]:h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 overflow-hidden rounded-full bg-muted/20 border-2 border-transparent transition-colors group-hover/item:border-accent-primary/20">
+            <div className="relative w-[22vw] h-[22vw] sm:w-32 sm:h-32 md:w-40 md:h-40 overflow-hidden rounded-full bg-muted/20 border-2 border-transparent transition-colors group-hover/item:border-accent-primary/20">
               <Image
                 src={cat.imageUrl}
                 alt={cat.name}
