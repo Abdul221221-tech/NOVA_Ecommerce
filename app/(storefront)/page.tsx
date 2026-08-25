@@ -167,14 +167,14 @@ export default async function StorefrontHome() {
         <div className="container mx-auto px-4 max-w-[1600px]">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 h-auto lg:h-[600px]">
             {/* Main Carousel (Spans 2 columns) */}
-            <div className="lg:col-span-2 h-[500px] lg:h-full">
+            <div className="lg:col-span-2 h-[350px] sm:h-[450px] lg:h-full">
               <HeroCarousel slides={heroSlides} />
             </div>
             
             {/* Side Promo Tiles (Stacked) */}
             <div className="flex flex-col gap-4 lg:gap-6 h-auto lg:h-full">
               {/* Promo Tile 1 */}
-              <Link href="/categories/accessories" className="relative flex-1 rounded-2xl overflow-hidden group min-h-[240px] lg:min-h-0 bg-muted">
+              <Link href="/categories/accessories" className="relative flex-1 rounded-2xl overflow-hidden group min-h-[160px] sm:min-h-[240px] lg:min-h-0 bg-muted">
                 <Image
                   src={promoAccessoriesUrl}
                   alt="Accessories Promo"
@@ -184,7 +184,7 @@ export default async function StorefrontHome() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <h3 className="text-2xl font-bold text-white mb-2">Essential Accessories</h3>
+                  <h3 className="text-lg sm:text-2xl font-bold text-white mb-2">Essential Accessories</h3>
                   <div className="flex items-center text-white/90 font-medium group-hover:text-white transition-colors">
                     Shop Now <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                   </div>
@@ -192,7 +192,7 @@ export default async function StorefrontHome() {
               </Link>
 
               {/* Promo Tile 2 */}
-              <Link href="/categories/electronics" className="relative flex-1 rounded-2xl overflow-hidden group min-h-[240px] lg:min-h-0 bg-muted">
+              <Link href="/categories/electronics" className="relative flex-1 rounded-2xl overflow-hidden group min-h-[160px] sm:min-h-[240px] lg:min-h-0 bg-muted">
                 <Image
                   src={promoElectronicsUrl}
                   alt="Electronics Promo"
@@ -202,7 +202,7 @@ export default async function StorefrontHome() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <h3 className="text-2xl font-bold text-white mb-2">Next-Gen Tech</h3>
+                  <h3 className="text-lg sm:text-2xl font-bold text-white mb-2">Next-Gen Tech</h3>
                   <div className="flex items-center text-white/90 font-medium group-hover:text-white transition-colors">
                     Upgrade Now <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                   </div>
@@ -215,10 +215,10 @@ export default async function StorefrontHome() {
 
 
       {/* Shop by Category Row */}
-      <section className="w-full py-20 bg-background">
+      <section className="w-full py-10 sm:py-16 md:py-20 bg-background">
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12">
           <div className="flex justify-between items-end mb-10">
-            <h2 className="font-heading text-4xl font-bold">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold">
               <ScrollReveal>Shop by Category</ScrollReveal>
             </h2>
             <Link href="/categories" className="text-accent-primary font-medium hover:underline hidden sm:block">View all &rarr;</Link>
@@ -230,10 +230,10 @@ export default async function StorefrontHome() {
 
       {/* Shop by Brand Row */}
       {uniqueBrands.length > 0 && (
-        <section className="w-full pb-20 bg-background">
+        <section className="w-full pb-10 sm:pb-16 md:pb-20 bg-background">
           <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12">
             <div className="flex justify-between items-end mb-10">
-              <h2 className="font-heading text-4xl font-bold">
+              <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold">
                 <ScrollReveal>Shop by Brand</ScrollReveal>
               </h2>
             </div>
@@ -244,10 +244,10 @@ export default async function StorefrontHome() {
       )}
 
       {/* Trending (Tabbed Carousel) */}
-      <section className="w-full py-20 bg-muted/20 overflow-hidden">
+      <section className="w-full py-10 sm:py-16 md:py-20 bg-muted/20 overflow-hidden">
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12">
           <div className="flex justify-between items-end mb-10">
-            <h2 className="font-heading text-4xl font-bold">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold">
               <ScrollReveal>Trending Now</ScrollReveal>
             </h2>
             <Link href="/products" className="text-accent-primary font-medium hover:underline">Shop all &rarr;</Link>
@@ -257,10 +257,10 @@ export default async function StorefrontHome() {
       </section>
 
       {/* Just Arrived Carousel */}
-      <section className="w-full py-20 bg-background overflow-hidden">
+      <section className="w-full py-10 sm:py-16 md:py-20 bg-background overflow-hidden">
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12">
           <div className="flex justify-between items-end mb-6">
-            <h2 className="font-heading text-4xl font-bold">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold">
               <ScrollReveal>Just Arrived</ScrollReveal>
             </h2>
             <Link href="/products" className="text-accent-primary font-medium hover:underline">Shop all &rarr;</Link>
@@ -273,10 +273,10 @@ export default async function StorefrontHome() {
       <PersonalizedFeed />
 
       {/* Best Selling Carousel */}
-      <section className="w-full py-20 bg-muted/20 overflow-hidden">
+      <section className="w-full py-10 sm:py-16 md:py-20 bg-muted/20 overflow-hidden">
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-8 xl:px-12">
           <div className="flex justify-between items-end mb-6">
-            <h2 className="font-heading text-4xl font-bold">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold">
               <ScrollReveal>Best Selling</ScrollReveal>
             </h2>
             <Link href="/products" className="text-accent-primary font-medium hover:underline">Shop all &rarr;</Link>

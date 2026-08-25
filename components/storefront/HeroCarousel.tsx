@@ -49,7 +49,7 @@ export function HeroCarousel({ slides }: { slides: SlideData[] }) {
 
   return (
     <div 
-      className="relative w-full h-full min-h-[500px] md:min-h-[600px] bg-muted overflow-hidden rounded-2xl group"
+      className="relative w-full h-full min-h-[350px] sm:min-h-[450px] md:min-h-[600px] bg-muted overflow-hidden rounded-2xl group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -82,7 +82,7 @@ export function HeroCarousel({ slides }: { slides: SlideData[] }) {
               </p>
               <Link 
                 href={slides[currentIndex].href}
-                className={buttonVariants({ variant: "default", size: "lg", className: "h-12 px-8 rounded-full font-semibold shadow-xl" })}
+                className={buttonVariants({ variant: "default", size: "lg", className: "h-10 px-6 sm:h-12 sm:px-8 text-sm sm:text-base rounded-full font-semibold shadow-xl" })}
               >
                 {slides[currentIndex].ctaText}
               </Link>

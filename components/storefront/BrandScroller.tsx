@@ -44,16 +44,16 @@ export function BrandScroller({ brands }: { brands: string[] }) {
       {/* Scrollable Container */}
       <div 
         ref={scrollRef}
-        className="flex overflow-x-auto gap-4 pb-6 pt-2 px-1 snap-x snap-mandatory scrollbar-hide"
+        className="grid grid-cols-2 sm:flex sm:overflow-x-auto gap-3 sm:gap-4 pb-6 pt-2 px-1 sm:snap-x sm:snap-mandatory scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {brands.map((brand) => (
           <Link 
             key={brand} 
             href={`/products?brand=${encodeURIComponent(brand)}`} 
-            className="flex items-center justify-center min-w-[200px] h-24 snap-start shrink-0 bg-surface-base border border-border/50 rounded-xl hover:border-accent-primary/40 hover:shadow-md transition-all group/item"
+            className="flex items-center justify-center w-full sm:min-w-[200px] h-12 min-[400px]:h-16 sm:h-24 sm:snap-start shrink-0 bg-surface-base border border-border/50 rounded-xl hover:border-accent-primary/40 hover:shadow-md transition-all group/item"
           >
-            <span className="font-heading text-lg font-bold text-muted-foreground group-hover/item:text-foreground transition-colors uppercase tracking-widest text-center px-4">
+            <span className="font-heading text-xs sm:text-lg font-bold text-muted-foreground group-hover/item:text-foreground transition-colors uppercase tracking-widest text-center px-2 sm:px-4">
               {brand}
             </span>
           </Link>

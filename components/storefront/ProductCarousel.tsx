@@ -47,11 +47,11 @@ export function ProductCarousel({ products, promoBadge }: { products: Product[],
       {/* Scrollable Container */}
       <div 
         ref={scrollRef}
-        className="flex overflow-x-auto gap-6 pb-8 pt-4 px-2 snap-x snap-mandatory scrollbar-hide"
+        className="grid grid-cols-2 sm:flex sm:overflow-x-auto gap-3 sm:gap-6 pb-8 pt-4 px-2 sm:snap-x sm:snap-mandatory scrollbar-hide"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {products.map((product) => (
-          <div key={product.id} className="snap-start shrink-0 w-[280px] md:w-[320px]">
+          <div key={product.id} className="sm:snap-start shrink-0 w-full sm:w-[280px] md:w-[320px]">
             <SpotlightCard>
               <ProductCard product={product} promoBadge={promoBadge} />
             </SpotlightCard>

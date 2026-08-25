@@ -35,7 +35,7 @@ export function TabbedProductCarousel({ products }: { products: Product[] }) {
           <button
             key={cat}
             onClick={() => setActiveTab(cat)}
-            className={`relative px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
+            className={`relative px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
               activeTab === cat ? 'text-background' : 'text-foreground hover:bg-muted'
             }`}
           >
