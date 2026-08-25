@@ -45,7 +45,7 @@ export default async function StorefrontLayout({
   const activeBrands = brandProds ? (Array.from(new Set(brandProds.map(p => p.brand).filter(Boolean))) as string[]).sort() : []
 
   return (
-    <div className="flex min-h-screen flex-col pb-[calc(60px+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="flex min-h-[100dvh] flex-col pb-24 md:pb-0">
       <StorefrontProvider>
         <Header 
           user={user} 

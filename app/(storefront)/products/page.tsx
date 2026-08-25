@@ -110,6 +110,69 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
 
   const { data: products } = await query
 
+  // --- RECOMMENDATIONS LOGIC ---
+  let recommendedProducts: any[] = []
+  if (q || category || brand) {
+    let recQuery = supabase
+      .from('products')
+      .select(`
+        id, title, price, compare_at_price, brand, description,
+        categories!inner ( id, name, slug ),
+        stores!inner ( name, slug, status, promotions ( code, discount_type, value, is_active, starts_at, expires_at ) ),
+        product_images ( url, sort_order ),
+        reviews ( rating ),
+        product_variants ( id, size, color )
+      `)
+      .eq('status', 'active')
+      .eq('stores.status', 'approved')
+      .limit(10)
+
+    if (products && products.length > 0) {
+      const catSlug = (products[0] as any).categories?.slug
+      const brandStr = (products[0] as any).brand
+      if (catSlug) recQuery = recQuery.ilike('categories.slug', catSlug)
+      else if (brandStr) recQuery = recQuery.ilike('brand', brandStr)
+      
+      const exactIds = products.map((p: any) => p.id)
+      recQuery = recQuery.not('id', 'in', `(${exactIds.join(',')})`)
+    } else {
+      if (q) {
+        const words = q.split(' ').filter(w => w.length > 2)
+        if (words.length > 0) {
+           recQuery = recQuery.or(`title.ilike.%${words[0]}%,brand.ilike.%${words[0]}%`)
+        } else {
+           recQuery = recQuery.order('created_at', { ascending: false })
+        }
+      } else if (category && catArray.length > 0) {
+         recQuery = recQuery.ilike('categories.slug', catArray[0])
+      } else if (brand && brandArray.length > 0) {
+         recQuery = recQuery.ilike('brand', brandArray[0])
+      }
+    }
+    
+    let { data: recData } = await recQuery
+    
+    if (!recData || recData.length === 0) {
+       const { data: fallback } = await supabase
+         .from('products')
+         .select(`
+            id, title, price, compare_at_price, brand, description,
+            categories!inner ( id, name, slug ),
+            stores!inner ( name, slug, status, promotions ( code, discount_type, value, is_active, starts_at, expires_at ) ),
+            product_images ( url, sort_order ),
+            reviews ( rating ),
+            product_variants ( id, size, color )
+         `)
+         .eq('status', 'active')
+         .eq('stores.status', 'approved')
+         .order('created_at', { ascending: false })
+         .limit(10)
+       recData = fallback
+    }
+    recommendedProducts = recData || []
+  }
+  // ------------------------------
+
   let activeChips: { type: string, label: string }[] = []
   
   if (catArray.length > 0) {
@@ -172,10 +235,11 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       </div>
 
       {/* Product Grid */}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col gap-12">
         {(!products || products.length === 0) ? (
           <div className="text-center text-muted-foreground py-16 bg-surface-base rounded-xl border">
-            No products found matching your criteria.
+            No products found matching your exact criteria.
+            {recommendedProducts.length > 0 && " But you might like these!"}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
@@ -186,7 +250,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 return p.is_active && !isExpired && hasStarted
               })
               const badgeText = activePromo 
-                ? (activePromo.discount_type === 'percentage' ? `${activePromo.value}% OFF` : `₹${activePromo.value} OFF`)
+                ? (activePromo.discount_type === 'percentage' ? `${activePromo.value}% OFF` : `$${activePromo.value} OFF`)
                 : undefined
 
               return (
@@ -195,6 +259,33 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 </SpotlightCard>
               )
             })}
+          </div>
+        )}
+
+        {/* Recommendations Section */}
+        {recommendedProducts.length > 0 && (
+          <div className="flex flex-col gap-6 pt-8 border-t border-border/50">
+            <h2 className="text-2xl font-heading font-bold text-foreground">
+              You May Also Like
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
+              {recommendedProducts.map((product: any) => {
+                const activePromo = product.stores?.promotions?.find((p: any) => {
+                  const isExpired = p.expires_at && new Date(p.expires_at) < new Date()
+                  const hasStarted = new Date(p.starts_at) <= new Date()
+                  return p.is_active && !isExpired && hasStarted
+                })
+                const badgeText = activePromo 
+                  ? (activePromo.discount_type === 'percentage' ? `${activePromo.value}% OFF` : `₹${activePromo.value} OFF`)
+                  : undefined
+
+                return (
+                  <SpotlightCard key={`rec-${product.id}`}>
+                    <ProductCard product={product} promoBadge={badgeText} />
+                  </SpotlightCard>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>

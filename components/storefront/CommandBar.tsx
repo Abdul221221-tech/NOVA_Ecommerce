@@ -256,7 +256,7 @@ export function CommandBarInner() {
             onBlur={() => setIsFocused(false)}
             onKeyDown={handleKeyDown}
             className={`w-full bg-transparent border-none relative z-10
-              rounded-full pl-[3.25rem] pr-10 py-2.5 text-sm transition-all duration-300
+              rounded-full pl-[3.25rem] pr-12 py-2.5 text-sm transition-all duration-300
               placeholder:text-muted-foreground/70 focus:outline-none focus:ring-0 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden ${isFocused ? 'text-foreground' : 'text-foreground/80'}`}
             placeholder="Search for products, brands, or categories..."
           />

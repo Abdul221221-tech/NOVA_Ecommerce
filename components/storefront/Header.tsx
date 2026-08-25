@@ -131,7 +131,7 @@ export function Header({
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className={`sticky top-0 z-50 w-full transition-all duration-500 flex justify-center ${isScrolled ? 'pt-2 pb-2' : 'pt-0 pb-0'}`}
+      className={`sticky top-0 z-50 w-full transition-all duration-500 flex flex-col items-center ${isScrolled ? 'pt-2 pb-2' : 'pt-0 pb-0'}`}
     >
       <div className={`w-[calc(100%-2rem)] max-w-[1600px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2rem] border border-foreground/10 bg-background/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] h-[72px] px-2 sm:px-4 md:px-8' : 'w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 h-24 px-4 md:px-10'}`}>
         <div className="flex items-center gap-1 sm:gap-4 md:gap-8 justify-between h-full">
@@ -736,7 +736,7 @@ export function Header({
             initial={{ height: 0, opacity: 0 }} 
             animate={{ height: 'auto', opacity: 1 }} 
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden absolute top-full left-0 w-full bg-background border-b border-border/50 p-4 shadow-xl z-40 overflow-hidden"
+            className="lg:hidden w-full bg-background border-b border-border/50 p-4 shadow-xl overflow-hidden"
           >
             <CommandBar />
           </motion.div>
