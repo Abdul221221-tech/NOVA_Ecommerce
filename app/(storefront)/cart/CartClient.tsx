@@ -250,7 +250,7 @@ export default function CartPage() {
             <button 
               onClick={handleProceedToCheckout}
               disabled={eligibleForCheckout === 0 || isNavigating}
-              className="w-full h-14 bg-foreground text-background hover:bg-accent-primary hover:text-white transition-all rounded-xl font-bold text-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="hidden md:flex w-full h-14 bg-foreground text-background hover:bg-accent-primary hover:text-white transition-all rounded-xl font-bold text-lg items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               {isNavigating ? 'Processing...' : 'Proceed to Order'}
               {!isNavigating && <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />}

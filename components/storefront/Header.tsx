@@ -52,6 +52,11 @@ export function Header({
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // Close mobile search automatically on navigation
+  useEffect(() => {
+    setIsMobileSearchOpen(false)
+  }, [pathname, searchParams])
+
   const [selectedCats, setSelectedCats] = useState<string[]>([])
   const [selectedBrnds, setSelectedBrnds] = useState<string[]>([])
   const [isCatOpen, setIsCatOpen] = useState(false)
