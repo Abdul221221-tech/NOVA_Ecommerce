@@ -21,7 +21,7 @@ export async function updateOrderStatusWithHistory(orderId: string, status: stri
   if (!order) throw new Error('Order not found')
 
   const isCustomer = order.customer_id === user.id
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = profile?.role === 'platform_admin'
   let isSeller = false
   if (!isCustomer && !isAdmin) {
     const { data: store } = await supabase.from('stores').select('id').eq('owner_id', user.id).single()
@@ -68,7 +68,7 @@ export async function updateOrderStatusWithHistory(orderId: string, status: stri
 
   revalidatePath('/account/orders')
   revalidatePath('/seller/orders')
-  revalidatePath('/platform-admin/orders')
+  revalidatePath('/admin/orders')
   
   return { success: true }
 }
@@ -257,7 +257,7 @@ export async function modifyOrderItems(orderId: string, request: OrderModificati
          type: 'system',
          related_id: order.id,
          icon: 'Undo2',
-         href: `/platform-admin/orders/${order.id}`
+         href: `/admin/orders/${order.id}`
        })
 
        // Notify Customer
@@ -323,7 +323,7 @@ export async function updateRefundStatus(refundId: string, status: string) {
   if (!user) throw new Error('Unauthorized')
   
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = profile?.role === 'platform_admin'
 
   let isSeller = false
   if (!isAdmin) {
@@ -338,6 +338,12 @@ export async function updateRefundStatus(refundId: string, status: string) {
   }
 
   if (!isAdmin && !isSeller) throw new Error('Unauthorized')
+  
+  if (isSeller && !isAdmin) {
+    if (status === 'completed' || status === 'initiated') {
+      throw new Error('Unauthorized: Only Platform Admins can execute and complete financial refunds.')
+    }
+  }
 
   const updatePayload: any = { status }
   if (status === 'completed') {
@@ -345,6 +351,30 @@ export async function updateRefundStatus(refundId: string, status: string) {
   }
 
   const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+
+  // Execute Stripe Refund if completing
+  if (status === 'completed') {
+    const { data: refund } = await adminClient.from('refunds').select('amount, payment_method, order_id').eq('id', refundId).single()
+    if (refund && refund.payment_method !== 'COD') {
+      const { data: order } = await adminClient.from('orders').select('stripe_payment_intent_id').eq('id', refund.order_id).single()
+      
+      if (order?.stripe_payment_intent_id && order.stripe_payment_intent_id !== 'COD') {
+        const { stripe } = await import('@/lib/stripe')
+        try {
+          // Stripe expects amounts in cents for INR/USD
+          await stripe.refunds.create({
+            payment_intent: order.stripe_payment_intent_id,
+            amount: Math.round(refund.amount * 100),
+            reason: 'requested_by_customer'
+          })
+        } catch (stripeErr: any) {
+          console.error('Stripe refund failed:', stripeErr)
+          throw new Error('Payment Gateway Error: ' + stripeErr.message)
+        }
+      }
+    }
+  }
+
   const { error } = await adminClient.from('refunds').update(updatePayload).eq('id', refundId)
   if (error) throw new Error(error.message)
 
@@ -367,7 +397,7 @@ export async function updateRefundStatus(refundId: string, status: string) {
     console.error('Failed to notify customer of refund update', err)
   }
 
-  revalidatePath('/platform-admin/orders')
+  revalidatePath('/admin/orders')
   revalidatePath('/seller/refunds')
   return { success: true }
 }
@@ -379,7 +409,7 @@ export async function updateReturnExchangeStatus(type: 'return' | 'exchange', id
 
   // Check if admin or seller
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = profile?.role === 'platform_admin'
   
   const { data: order } = await supabase.from('orders').select('store_id').eq('id', orderId).single()
   let isSeller = false

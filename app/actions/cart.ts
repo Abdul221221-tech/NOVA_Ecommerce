@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import { z } from 'zod'
 
 export async function addToCart(variantId: string, quantity: number) {
   const supabase = await createClient()
@@ -12,9 +13,19 @@ export async function addToCart(variantId: string, quantity: number) {
   let cartId: string | null = null
   let sessionId = cookieStore.get('nova_guest_session')?.value
   
+  if (sessionId) {
+    const parsed = z.string().uuid().safeParse(sessionId)
+    if (!parsed.success) sessionId = undefined
+  }
+
   if (!user && !sessionId) {
     sessionId = crypto.randomUUID()
-    cookieStore.set('nova_guest_session', sessionId, { maxAge: 60 * 60 * 24 * 30 }) // 30 days
+    cookieStore.set('nova_guest_session', sessionId, { 
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    }) 
   }
   
   // 1. Resolve Cart Identity

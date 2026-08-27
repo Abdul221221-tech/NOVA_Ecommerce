@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
   
   const path = request.nextUrl.pathname;
   let cookieName = 'sb-nova-customer-auth-token'
-  if (path.startsWith('/admin') || path.startsWith('/platform-admin')) {
+  if (path.startsWith('/admin') || path.startsWith('/admin')) {
     cookieName = 'sb-nova-admin-auth-token'
   } else if (path.startsWith('/seller')) {
     cookieName = 'sb-nova-seller-auth-token'
@@ -87,7 +87,7 @@ export async function updateSession(request: NextRequest) {
       }
     }
     
-    if (path.startsWith('/platform-admin')) {
+    if (path.startsWith('/admin')) {
       if (role !== 'platform_admin') {
         return NextResponse.redirect(new URL('/', request.url))
       }
@@ -96,8 +96,8 @@ export async function updateSession(request: NextRequest) {
     if (path.startsWith('/seller') && !path.startsWith('/seller/login') && !path.startsWith('/seller/signup')) {
       return NextResponse.redirect(new URL('/seller/login', request.url))
     }
-    if (path.startsWith('/platform-admin') && !path.startsWith('/platform-admin/login')) {
-      return NextResponse.redirect(new URL('/platform-admin/login', request.url))
+    if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
     }
   }
 

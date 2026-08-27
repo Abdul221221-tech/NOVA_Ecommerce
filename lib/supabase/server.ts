@@ -13,7 +13,7 @@ export async function createClient() {
     cookieName = 'sb-nova-admin-auth-token'
   } else if (pathname.startsWith('/seller') || referer.includes('/seller')) {
     cookieName = 'sb-nova-seller-auth-token'
-  } else if (pathname.startsWith('/platform-admin') || referer.includes('/platform-admin')) {
+  } else if (pathname.startsWith('/admin') || referer.includes('/admin')) {
     cookieName = 'sb-nova-admin-auth-token'
   }
 

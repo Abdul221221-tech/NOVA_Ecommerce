@@ -66,7 +66,7 @@ const navItems: NavItem[] = [
   { title: 'Marketing', href: '/admin/marketing', icon: <Megaphone className="w-5 h-5" /> },
   { title: 'Notifications', href: '/admin/notifications', icon: <Bell className="w-5 h-5" /> },
   { title: 'Analytics', href: '/admin/analytics', icon: <BarChart3 className="w-5 h-5" /> },
-  { title: 'Activity Log', href: '/admin/activity', icon: <Activity className="w-5 h-5" /> },
+  { title: 'Activity Log', href: '/admin/activity-logs', icon: <Activity className="w-5 h-5" /> },
   { title: 'Settings', href: '/admin/settings', icon: <Settings className="w-5 h-5" /> },
 ]
 

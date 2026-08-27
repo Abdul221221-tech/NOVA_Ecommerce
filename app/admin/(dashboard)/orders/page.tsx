@@ -8,7 +8,7 @@ import AdminRefundsClient from './AdminRefundsClient'
 export default async function PlatformAdminOrdersPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/platform-admin/login')
+  if (!user) redirect('/admin/login')
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
   if (profile?.role !== 'platform_admin' && user.user_metadata?.role !== 'platform_admin') {
@@ -24,6 +24,7 @@ export default async function PlatformAdminOrdersPage() {
       profiles ( email )
     `)
     .order('created_at', { ascending: false })
+    .limit(100)
 
   // Fetch Refunds
   const { data: refunds } = await supabase
@@ -34,6 +35,7 @@ export default async function PlatformAdminOrdersPage() {
       profiles ( email )
     `)
     .order('requested_at', { ascending: false })
+    .limit(100)
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8">

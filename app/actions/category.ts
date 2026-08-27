@@ -23,7 +23,7 @@ export async function createCategory(formData: FormData) {
   const { error } = await supabase.from('categories').insert({ name, slug })
   if (error) throw new Error(error.message)
   
-  revalidatePath('/platform-admin/categories')
+  revalidatePath('/admin/categories')
 }
 
 export async function deleteCategory(id: string) {
@@ -31,5 +31,5 @@ export async function deleteCategory(id: string) {
   const { error } = await supabase.from('categories').delete().eq('id', id)
   if (error) throw new Error(error.message)
   
-  revalidatePath('/platform-admin/categories')
+  revalidatePath('/admin/categories')
 }

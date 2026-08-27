@@ -13,6 +13,7 @@ export default async function AdminRefundsExchangesPage() {
       profiles ( name, email )
     `)
     .order('created_at', { ascending: false })
+    .limit(100)
 
   const { data: exchanges } = await supabase
     .from('exchange_requests')
@@ -23,6 +24,7 @@ export default async function AdminRefundsExchangesPage() {
       profiles ( name, email )
     `)
     .order('created_at', { ascending: false })
+    .limit(100)
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">

@@ -5,7 +5,7 @@ import { Store, Users, Package, ShoppingCart, DollarSign, RefreshCcw } from 'luc
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
-  // Run all count queries in parallel
+  // Run all count queries in parallel securely without massive payloads
   const [
     { count: totalCustomers },
     { count: totalSellers },
@@ -17,7 +17,7 @@ export default async function AdminDashboardPage() {
     { count: totalOrders },
     { count: pendingOrders },
     { count: pendingRefunds },
-    { data: revenueData }
+    { data: rpcRevenue, error: rpcError }
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'seller'),
@@ -29,10 +29,14 @@ export default async function AdminDashboardPage() {
     supabase.from('orders').select('*', { count: 'exact', head: true }),
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('refunds').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('orders').select('platform_fee') // To calculate total platform revenue
+    supabase.rpc('get_total_platform_revenue') // Replaces the unscalable SELECT *
   ])
 
-  const totalRevenue = revenueData?.reduce((acc, order) => acc + Number(order.platform_fee), 0) || 0
+  // Fallback to 0 if the user hasn't run the SQL patch yet
+  let totalRevenue = 0
+  if (!rpcError && typeof rpcRevenue === 'number') {
+    totalRevenue = rpcRevenue
+  }
 
   const metrics = [
     { title: 'Total Customers', value: totalCustomers || 0, icon: <Users className="w-5 h-5 text-indigo-400" /> },
@@ -53,6 +57,12 @@ export default async function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-heading font-bold text-white tracking-tight">Admin Dashboard</h1>
         <p className="text-slate-400 mt-2">Platform overview and key metrics.</p>
+        
+        {rpcError && (
+          <div className="mt-4 p-4 border border-status-warning bg-status-warning/10 text-status-warning rounded-md">
+            <strong>Action Required:</strong> The <code>get_total_platform_revenue</code> RPC function is missing. Please run the provided SQL patch to enable Revenue calculation!
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

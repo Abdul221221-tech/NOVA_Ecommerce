@@ -4,6 +4,39 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { embed, generateText } from 'ai'
 import { google } from '@ai-sdk/google'
+import { z } from 'zod'
+
+const ProductPayloadSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, 'Title is required').max(200),
+  description: z.string().min(1, 'Description is required'),
+  price: z.number().min(0, 'Price must be positive'),
+  compare_at_price: z.number().nullable().optional(),
+  status: z.enum(['draft', 'active', 'archived']),
+  category_id: z.string().nullable().optional(),
+  brand: z.string().nullable().optional(),
+  is_new_arrival: z.boolean().optional(),
+  is_coming_soon: z.boolean().optional(),
+  experience_story: z.string().nullable().optional(),
+  return_window_days: z.number().optional().default(7),
+  is_returnable: z.boolean().optional().default(true),
+  variants: z.array(z.object({
+    id: z.string().optional(),
+    sku: z.string().min(1, 'SKU is required'),
+    size: z.string().optional(),
+    color: z.string().optional(),
+    price_override: z.number().nullable().optional(),
+    stock_quantity: z.number().min(0)
+  })).min(1, 'At least one variant is required'),
+  images: z.array(z.object({
+    id: z.string().optional(),
+    url: z.string().url(),
+    sort_order: z.number()
+  })).optional().default([]),
+  model_url: z.string().nullable().optional()
+})
+
+export type ProductPayload = z.input<typeof ProductPayloadSchema>
 
 async function getSellerStore() {
   const supabase = await createClient()
@@ -16,37 +49,13 @@ async function getSellerStore() {
   return { supabase, storeId: store.id }
 }
 
-export type ProductPayload = {
-  id?: string
-  title: string
-  description: string
-  price: number
-  compare_at_price?: number | null
-  status: 'draft' | 'active' | 'archived'
-  category_id?: string | null
-  brand?: string | null
-  is_new_arrival?: boolean
-  is_coming_soon?: boolean
-  experience_story?: string | null
-  return_window_days?: number
-  is_returnable?: boolean
-  variants: {
-    id?: string
-    sku: string
-    size?: string
-    color?: string
-    price_override?: number | null
-    stock_quantity: number
-  }[]
-  images: {
-    id?: string
-    url: string
-    sort_order: number
-  }[]
-  model_url?: string | null
-}
+export async function upsertProduct(rawPayload: any) {
+  const parsed = ProductPayloadSchema.safeParse(rawPayload)
+  if (!parsed.success) {
+    throw new Error(parsed.error.message || 'Invalid product data')
+  }
+  const payload = parsed.data
 
-export async function upsertProduct(payload: ProductPayload) {
   const { supabase, storeId } = await getSellerStore()
 
   // 1. Upsert Product
@@ -73,7 +82,10 @@ export async function upsertProduct(payload: ProductPayload) {
 
   if (productId) {
     const { error } = await supabase.from('products').update(productData).eq('id', productId).eq('store_id', storeId)
-    if (error) throw new Error(error.message)
+    if (error) {
+      console.error("Update error")
+      throw new Error('Failed to update product')
+    }
   } else {
     // Generate an AI experience story if missing
     if (!productData.experience_story) {
@@ -84,19 +96,21 @@ export async function upsertProduct(payload: ProductPayload) {
         })
         productData.experience_story = text.trim()
       } catch (err) {
-        console.error('Failed to generate experience story:', err)
+        console.error('Failed to generate experience story')
       }
     }
 
     const { data, error } = await supabase.from('products').insert(productData).select('id').single()
-    if (error) throw new Error(error.message)
+    if (error) {
+      console.error("Insert error")
+      throw new Error('Failed to create product')
+    }
     productId = data.id
   }
 
   if (!productId) throw new Error('Failed to obtain product ID')
 
-  // 2. Variants (For simplicity in this MVP, we delete existing and re-insert, or upsert by ID)
-  // To safely handle removals, we first delete all variants NOT in the incoming payload (if they have IDs)
+  // 2. Variants
   const incomingVariantIds = payload.variants.map(v => v.id).filter(Boolean) as string[]
   if (incomingVariantIds.length > 0) {
     await supabase.from('product_variants').delete().eq('product_id', productId).not('id', 'in', `(${incomingVariantIds.join(',')})`)
@@ -108,8 +122,8 @@ export async function upsertProduct(payload: ProductPayload) {
     if (variant.id) {
       await supabase.from('product_variants').update({
         sku: variant.sku,
-        size: variant.size,
-        color: variant.color,
+        size: variant.size || null,
+        color: variant.color || null,
         price_override: variant.price_override,
         stock_quantity: variant.stock_quantity
       }).eq('id', variant.id).eq('product_id', productId)
@@ -117,15 +131,15 @@ export async function upsertProduct(payload: ProductPayload) {
       await supabase.from('product_variants').insert({
         product_id: productId,
         sku: variant.sku,
-        size: variant.size,
-        color: variant.color,
+        size: variant.size || null,
+        color: variant.color || null,
         price_override: variant.price_override,
         stock_quantity: variant.stock_quantity
       })
     }
   }
 
-  // 3. Images (Same pattern)
+  // 3. Images
   const incomingImageIds = payload.images.map(i => i.id).filter(Boolean) as string[]
   if (incomingImageIds.length > 0) {
     await supabase.from('product_images').delete().eq('product_id', productId).not('id', 'in', `(${incomingImageIds.join(',')})`)
@@ -148,13 +162,10 @@ export async function upsertProduct(payload: ProductPayload) {
       value: `Title: ${payload.title}\nDescription: ${payload.description}\nCategory ID: ${payload.category_id || 'None'}`,
     })
     
-    // Convert array to pgvector string format: '[0.1, 0.2, ...]'
     const embeddingString = `[${embedding.join(',')}]`
-    
-    // Update the embedding column
     await supabase.from('products').update({ embedding: embeddingString }).eq('id', productId)
   } catch (err) {
-    console.error('Failed to generate embedding for product', productId, err)
+    console.error('Failed to generate embedding for product')
   }
 
   revalidatePath('/seller/products')
@@ -163,17 +174,32 @@ export async function upsertProduct(payload: ProductPayload) {
 }
 
 export async function deleteProducts(productIds: string[]) {
+  const parsed = z.array(z.string().uuid()).safeParse(productIds)
+  if (!parsed.success) throw new Error('Invalid product IDs')
+
   const { supabase, storeId } = await getSellerStore()
-  // RLS and store_id filter protect against deleting other sellers' products
-  const { error } = await supabase.from('products').delete().eq('store_id', storeId).in('id', productIds)
-  if (error) throw new Error(error.message)
+  const { error } = await supabase.from('products').delete().eq('store_id', storeId).in('id', parsed.data)
+  
+  if (error) {
+    console.error("Delete error")
+    throw new Error('Failed to delete products')
+  }
   revalidatePath('/seller/products')
 }
 
 export async function updateProductStatuses(productIds: string[], status: 'draft' | 'active' | 'archived') {
+  const parsedIds = z.array(z.string().uuid()).safeParse(productIds)
+  const parsedStatus = z.enum(['draft', 'active', 'archived']).safeParse(status)
+  
+  if (!parsedIds.success || !parsedStatus.success) throw new Error('Invalid input')
+
   const { supabase, storeId } = await getSellerStore()
-  const { error } = await supabase.from('products').update({ status }).eq('store_id', storeId).in('id', productIds)
-  if (error) throw new Error(error.message)
+  const { error } = await supabase.from('products').update({ status: parsedStatus.data }).eq('store_id', storeId).in('id', parsedIds.data)
+  
+  if (error) {
+    console.error("Status update error")
+    throw new Error('Failed to update product statuses')
+  }
   revalidatePath('/seller/products')
 }
 

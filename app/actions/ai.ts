@@ -14,7 +14,7 @@ export async function generateReviewSummary(productId: string) {
 
     if (!reviews || reviews.length === 0) return null
 
-    // We only summarize if there are enough reviews to matter (e.g. at least 1)
+    
     const reviewText = reviews.map(r => `Rating: ${r.rating}/5 - ${r.body}`).join('\n')
 
     const { text } = await generateText({

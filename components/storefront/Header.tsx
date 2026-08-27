@@ -243,7 +243,7 @@ export function Header({
                           <Link href="/wishlist" className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors" onClick={() => setIsMobileSearchOpen(false)}>Wishlist</Link>
                           <Link href="/account/settings" className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors" onClick={() => setIsMobileSearchOpen(false)}>Settings</Link>
                           {(role === 'seller' || role === 'platform_admin') && (
-                            <Link href={role === 'seller' ? '/seller' : '/platform-admin'} className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors">Dashboard</Link>
+                            <Link href={role === 'seller' ? '/seller' : '/admin'} className="px-4 py-2.5 rounded-xl text-base text-foreground/80 hover:bg-muted hover:text-accent-primary transition-colors">Dashboard</Link>
                           )}
                           <form action={logout}>
                             <button type="submit" className="w-full text-left px-4 py-2.5 rounded-xl text-base text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">Log out</button>
@@ -631,7 +631,7 @@ export function Header({
                     <DropdownMenuGroup className="relative z-30 px-1 py-1 space-y-1">
                       {(role === 'seller' || role === 'platform_admin') && (
                         <DropdownMenuItem className="p-0 focus:bg-transparent cursor-pointer rounded-xl group/menuitem">
-                          <Link href={role === 'seller' ? '/seller' : '/platform-admin'} className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
+                          <Link href={role === 'seller' ? '/seller' : '/admin'} className="relative group flex items-center justify-between w-full p-1.5 sm:p-2.5 rounded-xl transition-all duration-300">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-indigo-600/15 opacity-0 group-hover:opacity-100 group-data-[highlighted]/menuitem:opacity-100 transition-opacity duration-300 rounded-xl" />
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 bg-blue-400 group-hover:h-1/2 group-data-[highlighted]/menuitem:h-1/2 transition-all duration-300 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                             

@@ -13,6 +13,7 @@ export default async function AdminSellersPage({ searchParams }: { searchParams:
       profiles:owner_id ( email, name )
     `)
     .order('created_at', { ascending: false })
+    .limit(100)
 
   return (
     <div className="space-y-8">

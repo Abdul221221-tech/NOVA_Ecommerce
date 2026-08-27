@@ -4,7 +4,7 @@ export function createClient() {
   let cookieName = 'sb-nova-customer-auth-token'
   if (typeof window !== 'undefined') {
     const pathname = window.location.pathname
-    if (pathname.startsWith('/admin') || pathname.startsWith('/platform-admin')) {
+    if (pathname.startsWith('/admin') || pathname.startsWith('/admin')) {
       cookieName = 'sb-nova-admin-auth-token'
     } else if (pathname.startsWith('/seller')) {
       cookieName = 'sb-nova-seller-auth-token'

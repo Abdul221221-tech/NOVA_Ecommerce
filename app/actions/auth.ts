@@ -4,17 +4,53 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { mergeGuestCart } from './cart'
-
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { z } from 'zod'
+
+const LoginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+  rememberMe: z.boolean().optional(),
+  currentPath: z.string().optional().default('/'),
+  redirectTo: z.string().optional()
+})
+
+const SignupSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  role: z.enum(['customer', 'seller']).optional().default('customer'),
+  currentPath: z.string().optional().default('/'),
+  redirectTo: z.string().optional()
+})
+
+const PasswordUpdateSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string().min(6, 'Confirm password must be at least 6 characters')
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"]
+})
 
 export async function login(formData: FormData) {
-  const rawEmail = formData.get('email') as string
-  const email = rawEmail?.trim()
-  const password = formData.get('password') as string
-  const rememberMe = formData.get('rememberMe') === 'on'
-  const currentPath = formData.get('currentPath') as string || '/'
-  const redirectTo = formData.get('redirectTo') as string
+  const parsed = LoginSchema.safeParse({
+    email: formData.get('email')?.toString().trim(),
+    password: formData.get('password')?.toString(),
+    rememberMe: formData.get('rememberMe') === 'on',
+    currentPath: formData.get('currentPath')?.toString(),
+    redirectTo: formData.get('redirectTo')?.toString()
+  })
   
+  if (!parsed.success) {
+    const errorMsg = parsed.error.message || 'Invalid input'
+    const currentPath = formData.get('currentPath')?.toString() || '/'
+    const separator = currentPath.includes('?') ? '&' : '?'
+    return redirect(`${currentPath}${separator}error=${encodeURIComponent(errorMsg)}`)
+  }
+
+  const { email, password, rememberMe, currentPath, redirectTo } = parsed.data
+
   const cookieStore = await cookies()
   cookieStore.set('nova-remember-me', rememberMe ? 'true' : 'false', { path: '/' })
 
@@ -27,11 +63,17 @@ export async function login(formData: FormData) {
 
   if (error) {
     const separator = currentPath.includes('?') ? '&' : '?'
-    return redirect(`${currentPath}${separator}error=${encodeURIComponent('Login failed: ' + error.message)}`)
+    // Generic error message for security
+    const safeMsg = error.message.includes('credential') ? 'Invalid login credentials' : 'An error occurred during login'
+    return redirect(`${currentPath}${separator}error=${encodeURIComponent(safeMsg)}`)
   }
 
   if (data?.user) {
-    await mergeGuestCart(data.user.id)
+    try {
+      await mergeGuestCart(data.user.id)
+    } catch (e) {
+      console.error("Failed to merge cart:", e)
+    }
     
     // Failsafe: if profile is somehow missing, try to create it silently
     const { data: profile } = await supabase.from('profiles').select('id').eq('id', data.user.id).single()
@@ -76,17 +118,26 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const rawEmail = formData.get('email') as string
-  const email = rawEmail?.trim()
-  const password = formData.get('password') as string
-  const name = formData.get('name') as string
-  const role = formData.get('role') as string || 'customer'
-  const currentPath = formData.get('currentPath') as string || '/'
-  const redirectTo = formData.get('redirectTo') as string
+  const parsed = SignupSchema.safeParse({
+    email: formData.get('email')?.toString().trim(),
+    password: formData.get('password')?.toString(),
+    name: formData.get('name')?.toString(),
+    role: formData.get('role')?.toString(),
+    currentPath: formData.get('currentPath')?.toString(),
+    redirectTo: formData.get('redirectTo')?.toString()
+  })
 
+  if (!parsed.success) {
+    const errorMsg = parsed.error.message || 'Invalid input'
+    const currentPath = formData.get('currentPath')?.toString() || '/'
+    const separator = currentPath.includes('?') ? '&' : '?'
+    return redirect(`${currentPath}${separator}error=${encodeURIComponent(errorMsg)}`)
+  }
+
+  const { email, password, name, role, currentPath, redirectTo } = parsed.data
   const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
-  // 1. Create the user safely and auto-confirm them to avoid "Invalid login credentials" issues
+  // 1. Create the user safely and auto-confirm them
   const { data, error } = await adminClient.auth.admin.createUser({
     email,
     password,
@@ -103,11 +154,11 @@ export async function signup(formData: FormData) {
       return redirect(`/login${separator}error=${encodeURIComponent('You already have an account. Please log in.')}`)
     }
     const separator = currentPath.includes('?') ? '&' : '?'
-    return redirect(`${currentPath}${separator}error=${encodeURIComponent(error.message)}`)
+    return redirect(`${currentPath}${separator}error=${encodeURIComponent('Registration failed. Please try again.')}`)
   }
 
   if (data?.user) {
-    // 2. Failsafe: Ensure profile was created by the DB trigger. If trigger failed, create it manually.
+    // 2. Failsafe profile creation
     const { data: existingProfile } = await adminClient.from('profiles').select('id').eq('id', data.user.id).single()
     if (!existingProfile) {
       await adminClient.from('profiles').insert({
@@ -137,19 +188,17 @@ export async function signup(formData: FormData) {
 
     // 3. Log the user in so their session is immediately ready
     const supabase = await createClient()
-    await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
+    await supabase.auth.signInWithPassword({ email, password })
     
-    await mergeGuestCart(data.user.id)
+    try {
+      await mergeGuestCart(data.user.id)
+    } catch (e) {
+      console.error("Failed to merge cart:", e)
+    }
   }
 
   if (role === 'seller') return redirect('/seller')
-  
-  if (redirectTo && redirectTo.startsWith('/')) {
-    redirect(redirectTo)
-  }
+  if (redirectTo && redirectTo.startsWith('/')) redirect(redirectTo)
   redirect('/')
 }
 
@@ -171,17 +220,17 @@ export async function logout() {
 }
 
 export async function updatePassword(formData: FormData) {
-  const currentPassword = formData.get('currentPassword') as string
-  const newPassword = formData.get('newPassword') as string
-  const confirmPassword = formData.get('confirmPassword') as string
+  const parsed = PasswordUpdateSchema.safeParse({
+    currentPassword: formData.get('currentPassword')?.toString(),
+    newPassword: formData.get('newPassword')?.toString(),
+    confirmPassword: formData.get('confirmPassword')?.toString()
+  })
 
-  if (newPassword !== confirmPassword) {
-    return { error: 'Passwords do not match', success: false }
-  }
-  if (newPassword.length < 6) {
-    return { error: 'Password must be at least 6 characters', success: false }
+  if (!parsed.success) {
+    return { error: parsed.error.message || 'Invalid input', success: false }
   }
 
+  const { currentPassword, newPassword } = parsed.data
   const supabase = await createClient()
   
   // Verify current user
@@ -205,36 +254,36 @@ export async function updatePassword(formData: FormData) {
   })
   
   if (updateError) {
-    return { error: updateError.message, success: false }
+    return { error: 'Failed to update password', success: false }
   }
 
   return { error: null, success: true }
 }
 
 export async function requestPasswordReset(formData: FormData) {
-  const email = formData.get('email') as string
-  if (!email) return { error: 'Email is required', success: false }
+  const email = formData.get('email')?.toString()
+  const emailSchema = z.string().email()
+  
+  if (!email || !emailSchema.safeParse(email).success) {
+    return { error: 'Valid email is required', success: false }
+  }
 
   const supabase = await createClient()
-  
-  // In a real app, this sends an email. 
-  // With Supabase, it relies on the project's email settings.
-  // The user should get redirected to /update-password
   const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/update-password`,
   })
 
   if (error) {
-    return { error: error.message, success: false }
+    return { error: 'Failed to request password reset', success: false }
   }
 
   return { error: null, success: true }
 }
 
 export async function resetPassword(formData: FormData) {
-  const newPassword = formData.get('newPassword') as string
-  const confirmPassword = formData.get('confirmPassword') as string
+  const newPassword = formData.get('newPassword')?.toString() || ''
+  const confirmPassword = formData.get('confirmPassword')?.toString() || ''
 
   if (newPassword !== confirmPassword) {
     return { error: 'Passwords do not match', success: false }
@@ -244,13 +293,12 @@ export async function resetPassword(formData: FormData) {
   }
 
   const supabase = await createClient()
-
   const { error } = await supabase.auth.updateUser({
     password: newPassword
   })
 
   if (error) {
-    return { error: error.message, success: false }
+    return { error: 'Failed to reset password', success: false }
   }
 
   return { error: null, success: true }
