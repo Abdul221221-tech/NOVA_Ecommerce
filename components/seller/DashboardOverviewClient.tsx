@@ -5,6 +5,7 @@ import { motion, useReducedMotion, Variants } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DollarSign, ShoppingBag, Package, TrendingUp, Users, ArrowUpRight } from 'lucide-react'
 import { CountUp } from './CountUp'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface DashboardMetrics {
   revenue: number
@@ -17,6 +18,7 @@ interface DashboardMetrics {
   refunds: number
   returns: number
   exchanges: number
+  trendData?: { date: string, revenue: number }[]
 }
 
 export function DashboardOverviewClient({ metrics }: { metrics: DashboardMetrics }) {
@@ -173,30 +175,44 @@ export function DashboardOverviewClient({ metrics }: { metrics: DashboardMetrics
             </CardHeader>
             <CardContent className="flex items-center justify-center p-6 pt-0">
               <div className="w-full h-[250px] bg-slate-50 dark:bg-slate-800/50 rounded-xl border flex flex-col items-center justify-center relative overflow-hidden">
-                <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                  <motion.path
-                    d="M0,80 Q20,60 40,70 T80,40 T100,20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="text-accent-primary"
-                    variants={prefersReducedMotion ? {} : drawPath}
-                    initial="hidden"
-                    animate="visible"
-                  />
-                  <motion.path
-                    d="M0,80 Q20,60 40,70 T80,40 T100,20 L100,100 L0,100 Z"
-                    fill="currentColor"
-                    className="text-accent-primary/10"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                  />
-                </svg>
-                <div className="relative z-10 flex flex-col items-center gap-2 text-muted-foreground/50">
-                  <TrendingUp className="w-8 h-8" />
-                  <p className="text-sm font-medium">Sales Visualization</p>
-                </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={metrics.trendData || []} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--accent-primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--accent-primary))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted-foreground)/0.2)" />
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 12 }} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      stroke="hsl(var(--muted-foreground))"
+                    />
+                    <YAxis 
+                      tickFormatter={(value: any) => `?${value}`}
+                      tick={{ fontSize: 12 }} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      stroke="hsl(var(--muted-foreground))"
+                      width={60}
+                    />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                      formatter={(value: any) => [`?${value.toLocaleString('en-IN')}`, 'Revenue']}
+                      labelStyle={{ color: 'black', fontWeight: 'bold' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      stroke="hsl(var(--accent-primary))" 
+                      fillOpacity={1} 
+                      fill="url(#colorRevenue)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { DashboardOverviewClient } from '@/components/seller/DashboardOverviewClient'
+import { subDays, format, isSameDay } from 'date-fns'
 
 export default async function SellerDashboard() {
   const supabase = await createClient()
@@ -19,6 +20,7 @@ export default async function SellerDashboard() {
     refunds: 0,
     returns: 0,
     exchanges: 0,
+    trendData: [] as { date: string, revenue: number }[]
   }
 
   if (store) {
@@ -35,10 +37,22 @@ export default async function SellerDashboard() {
       metrics.pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'processing').length
       metrics.revenue = orders.reduce((sum, o) => o.status !== 'cancelled' && !o.status.startsWith('return') ? sum + (o.seller_payout || 0) : sum, 0)
       metrics.recentOrders = orders.slice(0, 4)
-    }
 
-    const { count: cancels } = await supabase.from('cancellation_requests').select('id', { count: 'exact', head: true })
-      .eq('orders.store_id', store.id).not('orders', 'is', null) // requires inner join implicitly if possible, wait, count with inner join in supabase needs proper syntax, better to just query where store_id is present if order is fetched, or just fetch all and filter
+      const daysArray = Array.from({ length: 7 }, (_, i) => {
+        const d = subDays(new Date(), 6 - i)
+        return { dateObj: d, date: format(d, 'MMM dd'), revenue: 0 }
+      })
+
+      orders.forEach(order => {
+        if (order.status !== 'cancelled' && !order.status.startsWith('return')) {
+          const orderDate = new Date(order.created_at)
+          const bucket = daysArray.find(d => isSameDay(d.dateObj, orderDate))
+          if (bucket) bucket.revenue += Number(order.seller_payout || 0)
+        }
+      })
+      
+      metrics.trendData = daysArray.map(d => ({ date: d.date, revenue: d.revenue }))
+    }
   }
 
   // To do inner joins properly for counts:

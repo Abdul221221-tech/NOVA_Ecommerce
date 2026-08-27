@@ -24,13 +24,17 @@ const navItems = [
     { href: '/seller/products', icon: Package, label: 'All Products', exact: true },
     { href: '/seller/products/new', icon: PlusCircle, label: 'Add Product' },
   ]},
-  { group: 'Sales & Orders', items: [
+  { group: 'Fulfillment', items: [
     { href: '/seller/orders', icon: ShoppingCart, label: 'Orders' },
-    { href: '/seller/cancellations', icon: XCircle, label: 'Cancellations' },
+  ]},
+  { group: 'Resolutions', items: [
     { href: '/seller/returns', icon: Undo2, label: 'Returns' },
     { href: '/seller/exchanges', icon: RefreshCw, label: 'Exchanges' },
+    { href: '/seller/cancellations', icon: XCircle, label: 'Cancellations' },
     { href: '/seller/refunds', icon: CreditCard, label: 'Refunds' },
-    { href: '/seller/sales', icon: LineChart, label: 'Sales Overview' },
+  ]},
+  { group: 'Finance & Reports', items: [
+    { href: '/seller/sales', icon: LineChart, label: 'Sales Ledger' },
     { href: '/seller/analytics', icon: BarChart3, label: 'Analytics' },
   ]},
   { group: 'Store Management', items: [
