@@ -239,9 +239,7 @@ While NOVA is fully functional, realistic roadmap improvements include:
 
 ## 📸 Screenshots / Demo
 
-*Add your live demo link and project screenshots here.*
-
-- **Live Demo**: [https://nova-ecommerce.vercel.app](#)
+- **Live Demo**:
 - **GitHub Repository**: [https://github.com/yourusername/nova-ecommerce](#)
 
 *(Placeholder for Screenshots)*
@@ -253,6 +251,6 @@ While NOVA is fully functional, realistic roadmap improvements include:
 
 ## 👨‍💻 Credits / Author
 
-Designed and developed by **[Your Name/Organization]**.
+Designed and developed by **Abdul Waheed**.
 
 If you have any questions or would like to collaborate, feel free to open an issue or reach out!
